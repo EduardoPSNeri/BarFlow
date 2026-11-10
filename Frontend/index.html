@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BarFlow — Protótipo acadêmico</title>
+    <style>
+        :root {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+            color: #1b2938;
+            background: #f4f7fb
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0
+        }
+
+        button,
+        input,
+        select {
+            font: inherit
+        }
+
+        button {
+            cursor: pointer;
+            min-height: 44px
+        }
+
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 3px solid #f4a62a;
+            outline-offset: 3px
+        }
+
+        .shell {
+            display: flex;
+            min-height: 100vh
+        }
+
+        .side {
+            width: 254px;
+            background: #102b3d;
+            color: #fff;
+            padding: 30px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 27px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px
+        }
+
+        .brandmark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #18ac93;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            font-weight: 800
+        }
+
+        .brand strong {
+            font-size: 25px;
+            letter-spacing: -1.1px
+        }
+
+        .brand small {
+            display: block;
+            color: #b5cad5;
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-weight: 700
+        }
+
+        .group-title {
+            font-size: 11px;
+            letter-spacing: 1.4px;
+            color: #87a4b4;
+            text-transform: uppercase;
+            padding: 0 12px;
+            margin-bottom: 10px
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .nav button {
+            border: 0;
+            background: transparent;
+            color: #c6d5de;
+            padding: 12px 14px;
+            border-radius: 10px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            font-weight: 600
+        }
+
+        .nav button.active {
+            background: #1b5060;
+            color: #fff
+        }
+
+        .nav button:hover {
+            background: #23465a
+        }
+
+        .nav .ico {
+            width: 24px;
+            text-align: center;
+            font-size: 19px
+        }
+
+        .side-bottom {
+            margin-top: auto;
+            background: #193c4e;
+            padding: 17px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #c6d7df;
+            line-height: 1.65
+        }
+
+        .side-bottom strong {
+            display: block;
+            color: #fff;
+            font-size: 13px
+        }
+
+        .content {
+            flex: 1;
+            min-width: 0
+        }
+
+        .topbar {
+            height: 82px;
+            background: #fff;
+            border-bottom: 1px solid #e5ecf1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 39px
+        }
+
+        .crumb {
+            font-size: 13px;
+            color: #64798a
+        }
+
+        .userbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #526579;
+            font-size: 13px
+        }
+
+        .avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background: #d9f3ec;
+            color: #086b60;
+            display: grid;
+            place-items: center;
+            font-weight: 800
+        }
+
+        .main {
+            padding: 35px 42px 50px;
+            max-width: 1350px;
+            margin: auto
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            font-weight: 750;
+            text-transform: uppercase;
+            color: #078a79;
+            letter-spacing: 1.4px
+        }
+
+        .head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 26px
+        }
+
+        .head h1 {
+            font-size: 30px;
+            letter-spacing: -.8px;
+            margin: 6px 0 7px
+        }
+
+        .sub {
+            color: #657a8a;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 40px;
+            background: #e9f8f2;
+            color: #08765e;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700
+        }
+
+        .demo {
+            background: #fef4d9;
+            color: #865500
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            background: #087b6d;
+            color: white;
+            padding: 11px 19px;
+            font-weight: 750;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            justify-content: center
+        }
+
+        .btn:hover {
+            background: #086556
+        }
+
+        .btn.secondary {
+            background: #fff;
+            color: #344b5a;
+            border: 1px solid #cfdce3
+        }
+
+        .btn.ghost {
+            background: transparent;
+            color: #2b6671;
+            border: 1px solid #bbd1d9
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e2eaf0;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(24, 63, 92, .035)
+        }
+
+        .metricrow {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 25px
+        }
+
+        .metric {
+            padding: 19px 23px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .metric span {
+            font-size: 12px;
+            color: #667b8a;
+            font-weight: 700
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 29px;
+            margin-top: 6px;
+            letter-spacing: -.8px
+        }
+
+        .metricicon {
+            background: #ecf3f8;
+            border-radius: 13px;
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            font-size: 22px
+        }
+
+        .sectiontop {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 24px;
+            border-bottom: 1px solid #eaf0f5
+        }
+
+        .sectiontop h2 {
+            font-size: 17px;
+            margin: 0
+        }
+
+        .legend {
+            display: flex;
+            gap: 17px;
+            font-size: 12px;
+            color: #536a7a
+        }
+
+        .dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-right: 5px
+        }
+
+        .tables {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 16px;
+            padding: 25px
+        }
+
+        .tablecard {
+            border: 1px solid #dce7ee;
+            border-radius: 12px;
+            padding: 18px 16px;
+            background: #fff;
+            min-height: 165px
+        }
+
+        .tablecard.selected {
+            border: 2px solid #10a28d;
+            background: #f4fcf9
+        }
+
+        .tablecard.occupied {
+            background: #f8f9fb
+        }
+
+        .tableupper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px
+        }
+
+        .tableupper b {
+            font-size: 16px
+        }
+
+        .status {
+            font-size: 11px;
+            border-radius: 30px;
+            padding: 6px 9px;
+            font-weight: 800
+        }
+
+        .free {
+            color: #06795d;
+            background: #ddf5ec
+        }
+
+        .busy {
+            color: #a06209;
+            background: #fff0d8
+        }
+
+        .tablecard p {
+            color: #718391;
+            font-size: 12px;
+            margin: 0 0 17px
+        }
+
+        .tablecard button {
+            width: 100%;
+            background: #fff;
+            border: 1px solid #bdd7d2;
+            color: #087a6b;
+            border-radius: 8px;
+            font-weight: 750;
+            font-size: 12px;
+            padding: 9px 3px;
+            min-height: 43px
+        }
+
+        .tablecard.occupied button {
+            border-color: #d4dfe6;
+            color: #496272
+        }
+
+        .footerhint {
+            padding: 16px 24px;
+            background: #f8fbfd;
+            border-top: 1px solid #e7edf2;
+            color: #6a7e8b;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between
+        }
+
+        .grid2 {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(320px, .8fr);
+            gap: 22px
+        }
+
+        .formblock {
+            padding: 24px
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 19px
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: 750;
+            color: #344b5b
+        }
+
+        .field input,
+        .field select {
+            height: 48px;
+            background: #fff;
+            color: #233c4a;
+            border: 1px solid #cbd9e1;
+            border-radius: 9px;
+            padding: 0 13px;
+            width: 100%
+        }
+
+        .field small {
+            color: #7a8b98;
+            font-size: 11px
+        }
+
+        .formcolumns {
+            display: grid;
+            grid-template-columns: 1fr 140px;
+            gap: 15px
+        }
+
+        .notice {
+            padding: 13px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.45
+        }
+
+        .notice.info {
+            background: #edf6fa;
+            color: #2f637a
+        }
+
+        .notice.good {
+            background: #e8f9f0;
+            color: #126a50
+        }
+
+        .notice.warn {
+            background: #fff5df;
+            color: #865800
+        }
+
+        .cartline {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e8eef2
+        }
+
+        .cartline strong {
+            display: block;
+            font-size: 13px
+        }
+
+        .cartline small {
+            color: #688091;
+            font-size: 12px
+        }
+
+        .price {
+            font-weight: 800;
+            color: #203444;
+            white-space: nowrap
+        }
+
+        .totalrow {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            align-items: center;
+            margin-top: 18px
+        }
+
+        .totalrow strong {
+            font-size: 25px
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+            flex-wrap: wrap
+        }
+
+        .listhead {
+            font-size: 12px;
+            font-weight: 800;
+            color: #617789;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-bottom: 14px
+        }
+
+        .tag {
+            border-radius: 7px;
+            background: #ecf5f8;
+            color: #356c80;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 9px
+        }
+
+        .review {
+            padding: 24px
+        }
+
+        .amount {
+            font-size: 34px;
+            letter-spacing: -1px;
+            font-weight: 850;
+            color: #1c3342
+        }
+
+        .summaryrow {
+            display: flex;
+            justify-content: space-between;
+            margin: 13px 0;
+            font-size: 14px;
+            color: #536b7b
+        }
+
+        .summaryrow b {
+            color: #263d4d
+        }
+
+        .divider {
+            height: 1px;
+            background: #e7edf1;
+            margin: 18px 0
+        }
+
+        .paytable {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .paytable th {
+            text-align: left;
+            color: #718899;
+            font-size: 11px;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf0f4
+        }
+
+        .paytable td {
+            padding: 15px 0;
+            border-bottom: 1px solid #edf0f4
+        }
+
+        .successcard {
+            padding: 22px;
+            border: 1px solid #bfe9d5;
+            background: #f0fbf5;
+            border-radius: 13px;
+            margin-bottom: 19px;
+            display: flex;
+            gap: 16px;
+            align-items: center
+        }
+
+        .successcircle {
+            width: 47px;
+            height: 47px;
+            background: #118564;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            font-size: 24px;
+            flex-shrink: 0
+        }
+
+        .successcard b {
+            color: #116247;
+            font-size: 17px
+        }
+
+        .successcard p {
+            color: #477965;
+            font-size: 12px;
+            margin: 5px 0 0
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .kbd {
+            font-size: 11px;
+            color: #8193a0
+        }
+
+        .note-demo {
+            background: #fffaf0;
+            border: 1px solid #f0dca8;
+            border-radius: 9px;
+            padding: 11px 14px;
+            color: #8d6d2e;
+            font-size: 12px;
+            margin-top: 20px
+        }
+
+        @media(max-width:1000px) {
+            .side {
+                width: 78px
+            }
+
+            .brand strong,
+            .brand small,
+            .nav span.label,
+            .group-title,
+            .side-bottom {
+                display: none
+            }
+
+            .brand {
+                padding: 0
+            }
+
+            .topbar {
+                padding: 0 20px
+            }
+
+            .main {
+                padding: 24px
+            }
+
+            .tables {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .grid2 {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:650px) {
+            .side {
+                display: none
+            }
+
+            .tables {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .metricrow {
+                grid-template-columns: 1fr
+            }
+
+            .head {
+                align-items: flex-start
+            }
+
+            .head h1 {
+                font-size: 24px
+            }
+
+            .main {
+                padding: 18px
+            }
+
+            .topbar {
+                height: 65px
+            }
+
+            .grid2 {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <aside class="side">
+            <div class="brand">
+                <div class="brandmark">B</div>
+                <div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div>
+            </div>
+            <div>
+                <div class="group-title">Operação</div>
+                <nav class="nav" aria-label="Navegação principal"><button id="nav-mesas" onclick="go('mesas')"
+                        class="active"><span class="ico">▦</span><span class="label">Painel de
+                            mesas</span></button><button id="nav-pedidos" onclick="go('pedidos')"><span
+                            class="ico">▤</span><span class="label">Registrar pedidos</span></button><button
+                        id="nav-pagamentos" onclick="go('pagamentos')"><span class="ico">▣</span><span
+                            class="label">Pagamentos</span></button></nav>
+            </div>
+            <div class="side-bottom"><strong>◉ Operação local</strong>Protótipo demonstrativo<br>Sem conexão externa
+                necessária</div>
+        </aside>
+        <div class="content">
+            <header class="topbar">
+                <div class="crumb">BarFlow <span style="color:#b7c5ce;margin:0 8px">/</span> <span
+                        id="crumb-name">Painel de mesas</span></div>
+                <div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span>
+                    <div class="avatar" aria-hidden="true">OD</div>
+                    <div><strong style="display:block;color:#283d4a">Operador Demo</strong><small>Perfil: Caixa</small>
+                    </div><button class="btn secondary"
+                        onclick="alert('Protótipo demonstrativo: autenticação real fora desta entrega.')"
+                        aria-label="Sair da sessão de demonstração">Sair</button>
+                </div>
+            </header>
+            <main class="main">
+                <section id="screen-mesas">
+                    <div class="head">
+                        <div>
+                            <div class="eyebrow">Visão geral • Atendimento</div>
+                            <h1>Painel de mesas</h1>
+                            <p class="sub">Identifique uma mesa e abra ou consulte sua comanda.</p>
+                        </div><span class="pill">● Operação disponível</span>
+                    </div>
+                    <div class="metricrow">
+                        <div class="metric panel">
+                            <div><span>MESAS CADASTRADAS</span><strong>10</strong></div>
+                            <div class="metricicon">▦</div>
+                        </div>
+                        <div class="metric panel">
+                            <div><span>MESAS LIVRES</span><strong id="freecount">6</strong></div>
+                            <div class="metricicon">✓</div>
+                        </div>
+                        <div class="metric panel">
+                            <div><span>MESAS OCUPADAS</span><strong id="busycount">4</strong></div>
+                            <div class="metricicon">▤</div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="sectiontop">
+                            <h2>Mesas do estabelecimento</h2>
+                            <div class="legend"><span><i class="dot" style="background:#129c75"></i>Livre</span><span><i
+                                        class="dot" style="background:#e3a443"></i>Ocupada</span></div>
+                        </div>
+                        <div class="tables" id="tables"></div>
+                        <div class="footerhint"><span>✓ Cada mesa pode ter apenas uma comanda
+                                aberta.</span><span>Selecione uma mesa para continuar</span></div>
+                    </div>
+                    <div class="note-demo">ℹ Protótipo acadêmico com dados fictícios. Nenhuma operação financeira real é
+                        executada.</div>
+                </section>
+                <section class="hidden" id="screen-pedidos">
+                    <div class="head">
+                        <div>
+                            <div class="eyebrow">Atendimento / Mesa 03</div>
+                            <h1>Registro de pedidos</h1>
+                            <p class="sub">Comanda <b>#101</b> · Mesa <b>03</b> · Status: <b>Aberta</b></p>
+                        </div><button class="btn secondary" onclick="go('mesas')">← Voltar às mesas</button>
+                    </div>
+                    <div class="grid2">
+                        <div class="panel">
+                            <div class="sectiontop">
+                                <h2>Adicionar itens ao pedido</h2><span class="tag">RF-003</span>
+                            </div>
+                            <div class="formblock">
+                                <div class="notice info" style="margin-bottom:22px"><span>ⓘ</span><span>Confira a
+                                        anotação recebida do garçom antes de confirmar o pedido.</span></div>
+                                <div class="field"><label for="product">Produto <span
+                                            aria-label="obrigatório">*</span></label><select id="product">
+                                        <option value="8">Refrigerante lata — R$ 8,00</option>
+                                        <option value="35">Porção de batata — R$ 35,00</option>
+                                        <option value="6">Água mineral — R$ 6,00</option>
+                                    </select></div>
+                                <div class="formcolumns">
+                                    <div class="field"><label for="quantity">Quantidade <span
+                                                aria-label="obrigatório">*</span></label><input id="quantity"
+                                            type="number" min="1" value="2" inputmode="numeric"><small>Informe um número
+                                            inteiro maior que zero.</small></div>
+                                    <div class="field"><label for="unit-price">Preço unitário</label><input
+                                            id="unit-price" value="R$ 8,00" disabled></div>
+                                </div>
+                                <div class="actions"><button class="btn secondary" onclick="addItem()">＋ Adicionar
+                                        item</button><button class="btn" onclick="confirmOrder()">✓ Confirmar
+                                        pedido</button></div>
+                                <div id="order-feedback" class="notice good" style="margin-top:24px" role="status">✓
+                                    Pedido #205 registrado com sucesso. O total da comanda foi atualizado.</div>
+                                <div class="note-demo">Após registrar, o caixa encaminha a anotação em papel à cozinha.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="sectiontop">
+                                <h2>Consumo da comanda</h2><span class="tag">#101</span>
+                            </div>
+                            <div class="review">
+                                <div class="listhead">Itens registrados</div>
+                                <div id="order-items">
+                                    <div class="cartline">
+                                        <div><strong>Refrigerante lata</strong><small>2 × R$ 8,00</small></div><span
+                                            class="price">R$ 16,00</span>
+                                    </div>
+                                    <div class="cartline">
+                                        <div><strong>Porção de batata</strong><small>1 × R$ 35,00</small></div><span
+                                            class="price">R$ 35,00</span>
+                                    </div>
+                                </div>
+                                <div class="totalrow"><span>Total acumulado</span><strong id="order-total">R$
+                                        51,00</strong></div>
+                                <p class="sub" style="margin:24px 0">Todos os itens ficam associados à mesma comanda até
+                                    o encerramento.</p><button class="btn" style="width:100%"
+                                    onclick="go('pagamentos')">Ir para pagamento →</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="hidden" id="screen-pagamentos">
+                    <div class="head">
+                        <div>
+                            <div class="eyebrow">Fechamento / Mesa 03</div>
+                            <h1>Pagamento e resultado</h1>
+                            <p class="sub">Comanda <b>#101</b> · Confira o pagamento e finalize o atendimento.</p>
+                        </div><button class="btn secondary" onclick="go('pedidos')">← Voltar à comanda</button>
+                    </div>
+                    <div class="successcard" role="status">
+                        <div class="successcircle">✓</div>
+                        <div><b id="success-title">Pagamento registrado com sucesso</b>
+                            <p id="success-desc">R$ 25,00 em dinheiro · Troco: R$ 4,00 · Saldo restante: R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="grid2">
+                        <div class="panel">
+                            <div class="sectiontop">
+                                <h2>Resumo da comanda #101</h2><span class="pill">✓ Quitada</span>
+                            </div>
+                            <div class="review">
+                                <div class="summaryrow"><span>2 × Refrigerante lata</span><b>R$ 16,00</b></div>
+                                <div class="summaryrow"><span>1 × Porção de batata</span><b>R$ 35,00</b></div>
+                                <div class="divider"></div>
+                                <div class="summaryrow"><span>Total consumido</span><b>R$ 51,00</b></div>
+                                <div class="summaryrow"><span>Total aplicado em pagamentos</span><b>R$ 51,00</b></div>
+                                <div class="divider"></div>
+                                <div style="display:flex;align-items:center;justify-content:space-between"><span
+                                        style="font-weight:700">Saldo restante</span><span class="amount">R$ 0,00</span>
+                                </div>
+                                <div class="notice good" style="margin-top:24px">✓ Comanda quitada. O encerramento pode
+                                    ser realizado com segurança.</div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="sectiontop">
+                                <h2>Pagamentos registrados</h2><span class="tag">RF-005 / RF-006</span>
+                            </div>
+                            <div class="review">
+                                <table class="paytable">
+                                    <thead>
+                                        <tr>
+                                            <th>FORMA</th>
+                                            <th>RECEBIDO</th>
+                                            <th>APLICADO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Pix</td>
+                                            <td>R$ 30,00</td>
+                                            <td>R$ 30,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dinheiro</td>
+                                            <td>R$ 25,00</td>
+                                            <td>R$ 21,00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="summaryrow" style="margin-top:23px"><span>Troco em dinheiro</span><b>R$
+                                        4,00</b></div>
+                                <div class="actions"><button class="btn" style="width:100%" onclick="closeAccount()"
+                                        id="closebutton">✓ Encerrar comanda</button><button class="btn secondary"
+                                        style="width:100%" onclick="go('mesas')">← Voltar ao painel</button></div>
+                                <div id="closing-info" class="notice info" style="margin-top:15px">ⓘ Ao encerrar, a mesa
+                                    03 ficará disponível para novo atendimento.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script>
+        const $ = id => document.getElementById(id);
+        const occupied = new Set([2, 4, 7, 9]);
+
+        function money(n) {
+            return n.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            })
+        }
+
+        function drawTables() {
+            let h = '';
+            for (let i = 1; i <= 10; i++) {
+                const busy = occupied.has(i);
+                h += `<article class="tablecard ${busy?'occupied':''} ${i===3?'selected':''}"><div class="tableupper"><b>Mesa ${String(i).padStart(2,'0')}</b><span class="status ${busy?'busy':'free'}">${busy?'◷ Ocupada':'✓ Livre'}</span></div><p>${busy?'Comanda em andamento':'Disponível para atendimento'}</p><button onclick="openTable(${i})">${busy?'Visualizar comanda':'＋ Abrir comanda'}</button></article>`
+            }
+            $('tables').innerHTML = h;
+            $('freecount').textContent = 10 - occupied.size;
+            $('busycount').textContent = occupied.size
+        }
+
+        function openTable(n) {
+            if (n === 3 || n === 2) {
+                occupied.add(3);
+                drawTables();
+                go('pedidos')
+            } else {
+                occupied.add(n);
+                drawTables();
+                alert('Comanda demonstrativa aberta na Mesa ' + n + '. Para ver o fluxo completo, selecione a Mesa 03.')
+            }
+        }
+
+        function go(screen) {
+            ['mesas', 'pedidos', 'pagamentos'].forEach(s => {
+                $('screen-' + s).classList.toggle('hidden', s !== screen);
+                $('nav-' + s).classList.toggle('active', s === screen)
+            });
+            $('crumb-name').textContent = {
+                mesas: 'Painel de mesas',
+                pedidos: 'Registro de pedidos',
+                pagamentos: 'Pagamento e resultado'
+            } [screen];
+            location.hash = screen;
+            window.scrollTo(0, 0)
+        }
+        $('product').addEventListener('change', e => {
+            $('unit-price').value = money(Number(e.target.value))
+        });
+
+        function addItem() {
+            const q = Number($('quantity').value);
+            if (!Number.isInteger(q) || q <= 0) {
+                $('order-feedback').className = 'notice warn';
+                $('order-feedback').textContent = '⚠ Quantidade inválida. Informe um número inteiro maior que zero.';
+                return
+            }
+            $('order-feedback').className = 'notice info';
+            $('order-feedback').textContent = 'ⓘ Item conferido. Use “Confirmar pedido” para concluir o registro.'
+        }
+
+        function confirmOrder() {
+            const q = Number($('quantity').value);
+            if (!Number.isInteger(q) || q <= 0) {
+                addItem();
+                return
+            }
+            $('order-feedback').className = 'notice good';
+            $('order-feedback').textContent =
+                '✓ Pedido registrado na demonstração. O total da comanda permanece ilustrativo.'
+        }
+
+        function closeAccount() {
+            occupied.delete(3);
+            $('closebutton').disabled = true;
+            $('closebutton').textContent = '✓ Comanda encerrada';
+            $('success-title').textContent = 'Comanda #101 encerrada com sucesso';
+            $('success-desc').textContent = 'Mesa 03 liberada para um novo atendimento.';
+            $('closing-info').textContent = '✓ Histórico preservado na demonstração.';
+            drawTables()
+        }
+        drawTables();
+        go(['mesas', 'pedidos', 'pagamentos'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'mesas');
+    </script>
+</body>
+
+</html>
