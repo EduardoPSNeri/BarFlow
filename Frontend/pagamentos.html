@@ -1,9 +1,56 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BarFlow — Pagamento e resultado</title><link rel="stylesheet" href="css/global.css"></head><body><div class="shell"><aside class="side"><div class="brand"><div class="brandmark">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div><div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal">
-<a id="nav-mesas" href="index.html"><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
-<a id="nav-pedidos" href="pedidos.html"><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
-<a id="nav-pagamentos" class="active" aria-current="page" href="pagamentos.html"><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a>
-</nav></div><div class="side-bottom"><strong>◉ Operação local</strong>Protótipo demonstrativo<br>Sem conexão externa necessária</div></aside><div class="content"><header class="topbar"><div class="crumb">BarFlow <span class="inline-1">/</span> <span id="crumb-name">Pagamento e resultado</span></div><div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div><strong class="inline-2">Operador Demo</strong><small>Perfil: Caixa</small></div><button class="btn secondary" onclick="alert('Protótipo demonstrativo: autenticação real fora desta entrega.')" aria-label="Sair da sessão de demonstração">Sair</button></div></header><main class="main">
-<section id="screen-pagamentos"><div class="head"><div><div class="eyebrow">Fechamento / Mesa 03</div><h1>Pagamento e resultado</h1><p class="sub">Comanda <b>#101</b> · Confira o pagamento e finalize o atendimento.</p></div><button class="btn secondary" onclick="go('pedidos')">← Voltar à comanda</button></div><div class="successcard" role="status"><div class="successcircle">✓</div><div><b id="success-title">Pagamento registrado com sucesso</b><p id="success-desc">R$ 25,00 em dinheiro · Troco: R$ 4,00 · Saldo restante: R$ 0,00</p></div></div><div class="grid2"><div class="panel"><div class="sectiontop"><h2>Resumo da comanda #101</h2><span class="pill">✓ Quitada</span></div><div class="review"><div class="summaryrow"><span>2 × Refrigerante lata</span><b>R$ 16,00</b></div><div class="summaryrow"><span>1 × Porção de batata</span><b>R$ 35,00</b></div><div class="divider"></div><div class="summaryrow"><span>Total consumido</span><b>R$ 51,00</b></div><div class="summaryrow"><span>Total aplicado em pagamentos</span><b>R$ 51,00</b></div><div class="divider"></div><div class="inline-9"><span class="inline-10">Saldo restante</span><span class="amount">R$ 0,00</span></div><div class="notice good inline-6">✓ Comanda quitada. O encerramento pode ser realizado com segurança.</div></div></div><div class="panel"><div class="sectiontop"><h2>Pagamentos registrados</h2><span class="tag">RF-005 / RF-006</span></div><div class="review"><table class="paytable"><thead><tr><th>FORMA</th><th>RECEBIDO</th><th>APLICADO</th></tr></thead><tbody><tr><td>Pix</td><td>R$ 30,00</td><td>R$ 30,00</td></tr><tr><td>Dinheiro</td><td>R$ 25,00</td><td>R$ 21,00</td></tr></tbody></table><div class="summaryrow inline-11"><span>Troco em dinheiro</span><b>R$ 4,00</b></div><div class="actions"><button class="btn inline-8" onclick="closeAccount()" id="closebutton">✓ Encerrar comanda</button><button class="btn secondary inline-8" onclick="go('mesas')">← Voltar ao painel</button></div><div id="closing-info" class="notice info inline-12">ⓘ Ao encerrar, a mesa 03 ficará disponível para novo atendimento.</div></div></div></div></section>
-</main></div></div><script src="js/app.js" defer></script>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="description" content="BarFlow: protótipo acadêmico de mesas, pedidos e pagamentos para pequenos bares.">
+ <title>BarFlow — Pagamentos</title>
+ <link rel="stylesheet" href="css/global.css">
+ <script src="js/store.js" defer></script>
+ <script src="js/app.js" defer></script>
+</head>
+<body data-page="pagamentos">
+ <div class="shell">
+ <aside class="side">
+  <div class="brand"><div class="brandmark" aria-hidden="true">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div>
+  <div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal"><a id="nav-mesas" href="index.html" ><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
+<a id="nav-pedidos" href="pedidos.html" ><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
+<a id="nav-pagamentos" href="pagamentos.html" class="active" aria-current="page"><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a></nav></div>
+  <div class="side-bottom"><strong>◉ Demonstração local</strong>Dados fictícios, sem servidor ou pagamentos reais.<button id="reset-demo" class="reset-button" type="button">Reiniciar demonstração</button></div>
+ </aside>
+ <div class="content">
+  <header class="topbar"><div class="crumb">BarFlow <span class="crumb-separator">/</span> Pagamentos</div>
+    <div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div class="user-identity"><strong>Operador Demo</strong><small>Perfil ilustrativo: Caixa</small></div><button id="logout-demo" class="btn secondary" type="button">Sair</button></div>
+  </header>
+  <main class="main"><section aria-labelledby="page-title">
+ <div class="head"><div><div class="eyebrow">Fechamento · Mesa <span data-mesa>—</span></div><h1 id="page-title">Pagamentos e fechamento</h1><p class="sub">Comanda <b data-comanda>—</b> · Confira pagamentos e encerre somente após a quitação.</p></div><a id="back-to-orders" href="pedidos.html" class="btn secondary">← Voltar à comanda</a></div>
+ <div id="empty-state" class="notice info" hidden></div>
+ <div id="flow-panel" class="grid2" hidden>
+  <div class="panel"><div class="sectiontop"><h2>Resumo da comanda <span data-comanda>—</span></h2><span class="tag">RF-005 / RF-006</span></div>
+   <div class="review"><div id="pay-items" aria-label="Itens consumidos"></div><div class="divider"></div>
+    <div class="summaryrow"><span>Total consumido</span><b id="pay-total">R$ 0,00</b></div>
+    <div class="summaryrow"><span>Pagamentos aplicados</span><b id="pay-paid">R$ 0,00</b></div>
+    <div class="divider"></div><div class="summaryrow"><strong>Saldo restante</strong><strong id="pay-due" class="amount">R$ 0,00</strong></div>
+    <div id="payment-status" class="notice info" role="status" aria-live="polite"></div>
+    <div class="actions"><button id="closebutton" class="btn full-width" type="button" disabled>✓ Encerrar comanda</button></div>
+    <p class="sub section-note">O encerramento só é permitido com saldo zero e itens registrados.</p>
+   </div></div>
+  <div class="panel"><div class="sectiontop"><h2>Registrar pagamento</h2><span class="tag">Pagamento parcial</span></div>
+   <div class="review">
+    <form id="pay-form"><div class="field"><label for="pay-method">Forma de pagamento *</label><select id="pay-method" required><option value="pix">Pix</option><option value="dinheiro">Dinheiro</option><option value="cartao">Cartão</option></select></div>
+      <div class="field"><label for="pay-value">Valor recebido (R$) *</label><input id="pay-value" type="text" inputmode="decimal" placeholder="Ex.: 25,00" required><small>Em dinheiro, o valor recebido pode incluir troco.</small></div>
+      <button class="btn full-width" type="submit">Registrar pagamento</button></form>
+    <div class="divider"></div><div class="listhead">Histórico de pagamentos desta comanda</div>
+    <div class="table-scroll"><table class="paytable"><thead><tr><th scope="col">FORMA</th><th scope="col">RECEBIDO</th><th scope="col">APLICADO</th><th scope="col">TROCO</th></tr></thead><tbody id="payment-list"></tbody></table></div>
+    <a href="index.html" class="btn secondary full-width section-note">← Voltar ao painel</a>
+   </div>
+  </div>
+ </div>
+</section>
+   <div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div>
+   <p class="note-demo">ⓘ Protótipo semifuncional: dados fictícios são salvos apenas neste navegador. Não possui autenticação, banco de dados, API ou integração financeira.</p>
+  </main>
+ </div>
+ </div>
 </body>
 </html>

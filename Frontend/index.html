@@ -1,9 +1,42 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BarFlow — Painel de mesas</title><link rel="stylesheet" href="css/global.css"></head><body><div class="shell"><aside class="side"><div class="brand"><div class="brandmark">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div><div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal">
-<a id="nav-mesas" class="active" aria-current="page" href="index.html"><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
-<a id="nav-pedidos" href="pedidos.html"><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
-<a id="nav-pagamentos" href="pagamentos.html"><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a>
-</nav></div><div class="side-bottom"><strong>◉ Operação local</strong>Protótipo demonstrativo<br>Sem conexão externa necessária</div></aside><div class="content"><header class="topbar"><div class="crumb">BarFlow <span class="inline-1">/</span> <span id="crumb-name">Painel de mesas</span></div><div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div><strong class="inline-2">Operador Demo</strong><small>Perfil: Caixa</small></div><button class="btn secondary" onclick="alert('Protótipo demonstrativo: autenticação real fora desta entrega.')" aria-label="Sair da sessão de demonstração">Sair</button></div></header><main class="main">
-<section id="screen-mesas"><div class="head"><div><div class="eyebrow">Visão geral • Atendimento</div><h1>Painel de mesas</h1><p class="sub">Identifique uma mesa e abra ou consulte sua comanda.</p></div><span class="pill">● Operação disponível</span></div><div class="metricrow"><div class="metric panel"><div><span>MESAS CADASTRADAS</span><strong>10</strong></div><div class="metricicon">▦</div></div><div class="metric panel"><div><span>MESAS LIVRES</span><strong id="freecount">6</strong></div><div class="metricicon">✓</div></div><div class="metric panel"><div><span>MESAS OCUPADAS</span><strong id="busycount">4</strong></div><div class="metricicon">▤</div></div></div><div class="panel"><div class="sectiontop"><h2>Mesas do estabelecimento</h2><div class="legend"><span><i class="dot inline-3"></i>Livre</span><span><i class="dot inline-4"></i>Ocupada</span></div></div><div class="tables" id="tables"></div><div class="footerhint"><span>✓ Cada mesa pode ter apenas uma comanda aberta.</span><span>Selecione uma mesa para continuar</span></div></div><div class="note-demo">ℹ Protótipo acadêmico com dados fictícios. Nenhuma operação financeira real é executada.</div></section>
-</main></div></div><script src="js/app.js" defer></script>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="description" content="BarFlow: protótipo acadêmico de mesas, pedidos e pagamentos para pequenos bares.">
+ <title>BarFlow — Painel de mesas</title>
+ <link rel="stylesheet" href="css/global.css">
+ <script src="js/store.js" defer></script>
+ <script src="js/app.js" defer></script>
+</head>
+<body data-page="mesas">
+ <div class="shell">
+ <aside class="side">
+  <div class="brand"><div class="brandmark" aria-hidden="true">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div>
+  <div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal"><a id="nav-mesas" href="index.html" class="active" aria-current="page"><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
+<a id="nav-pedidos" href="pedidos.html" ><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
+<a id="nav-pagamentos" href="pagamentos.html" ><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a></nav></div>
+  <div class="side-bottom"><strong>◉ Demonstração local</strong>Dados fictícios, sem servidor ou pagamentos reais.<button id="reset-demo" class="reset-button" type="button">Reiniciar demonstração</button></div>
+ </aside>
+ <div class="content">
+  <header class="topbar"><div class="crumb">BarFlow <span class="crumb-separator">/</span> Painel de mesas</div>
+    <div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div class="user-identity"><strong>Operador Demo</strong><small>Perfil ilustrativo: Caixa</small></div><button id="logout-demo" class="btn secondary" type="button">Sair</button></div>
+  </header>
+  <main class="main"><section aria-labelledby="page-title">
+ <div class="head"><div><div class="eyebrow">Visão geral · Atendimento</div><h1 id="page-title">Painel de mesas</h1><p class="sub">Abra uma comanda ou consulte o atendimento de qualquer mesa.</p></div><span class="pill">● Operação demonstrativa</span></div>
+ <div class="metricrow">
+  <div class="metric panel"><div><span>MESAS CADASTRADAS</span><strong id="all-count">10</strong></div><div class="metricicon" aria-hidden="true">▦</div></div>
+  <div class="metric panel"><div><span>MESAS LIVRES</span><strong id="free-count">10</strong></div><div class="metricicon" aria-hidden="true">✓</div></div>
+  <div class="metric panel"><div><span>MESAS OCUPADAS</span><strong id="busy-count">0</strong></div><div class="metricicon" aria-hidden="true">▤</div></div>
+ </div>
+ <div class="panel"><div class="sectiontop"><h2>Mesas do estabelecimento</h2><div class="legend"><span>✓ Livre</span><span>◷ Ocupada</span></div></div><div id="tables" class="tables" aria-label="Mesas cadastradas"></div>
+  <div class="footerhint"><span>Uma comanda aberta por mesa.</span><span>Selecione qualquer mesa para continuar.</span></div>
+ </div>
+ </section>
+   <div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div>
+   <p class="note-demo">ⓘ Protótipo semifuncional: dados fictícios são salvos apenas neste navegador. Não possui autenticação, banco de dados, API ou integração financeira.</p>
+  </main>
+ </div>
+ </div>
 </body>
 </html>

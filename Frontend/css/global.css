@@ -27,3 +27,17 @@
   .topbar { padding: 0 16px; }
   .userbox .avatar { display: none; }
 }
+
+/* BarFlow v0.3 — componentes compartilhados; sem estilos inline nas páginas */
+[hidden]{display:none!important}
+.nav a{border-radius:10px}
+.reset-button{display:block;margin-top:15px;width:100%;min-height:44px;border:1px solid #628392;border-radius:9px;background:transparent;color:#fff;padding:8px}
+.reset-button:hover{background:#254e62}
+.user-identity strong{display:block;color:#283d4a}.user-identity small{display:block}
+.crumb-separator{color:#b7c5ce;margin:0 8px}
+.intro-note{margin-bottom:22px}.section-note{margin:22px 0}.full-width{width:100%}
+.feedback{margin-top:20px}.table-scroll{overflow-x:auto}
+.tablecard button{min-height:44px}.nav a:focus-visible{outline:3px solid #f4a62a;outline-offset:3px}
+.btn.secondary:hover{background:#f1f6f9}
+#payment-status{margin-top:22px}
+@media(max-width:650px){.topbar{height:auto;min-height:76px;gap:10px;padding:12px 16px;flex-wrap:wrap}.head{flex-direction:column}.userbox{flex-wrap:wrap}.sectiontop{gap:12px;flex-wrap:wrap}.tables{padding:14px;gap:10px}.tablecard{padding:12px}.formcolumns{grid-template-columns:1fr}.footerhint{gap:10px;flex-wrap:wrap}}

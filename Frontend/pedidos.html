@@ -1,9 +1,55 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BarFlow — Registro de pedidos</title><link rel="stylesheet" href="css/global.css"></head><body><div class="shell"><aside class="side"><div class="brand"><div class="brandmark">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div><div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal">
-<a id="nav-mesas" href="index.html"><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
-<a id="nav-pedidos" class="active" aria-current="page" href="pedidos.html"><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
-<a id="nav-pagamentos" href="pagamentos.html"><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a>
-</nav></div><div class="side-bottom"><strong>◉ Operação local</strong>Protótipo demonstrativo<br>Sem conexão externa necessária</div></aside><div class="content"><header class="topbar"><div class="crumb">BarFlow <span class="inline-1">/</span> <span id="crumb-name">Registro de pedidos</span></div><div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div><strong class="inline-2">Operador Demo</strong><small>Perfil: Caixa</small></div><button class="btn secondary" onclick="alert('Protótipo demonstrativo: autenticação real fora desta entrega.')" aria-label="Sair da sessão de demonstração">Sair</button></div></header><main class="main">
-<section id="screen-pedidos"><div class="head"><div><div class="eyebrow">Atendimento / Mesa 03</div><h1>Registro de pedidos</h1><p class="sub">Comanda <b>#101</b> · Mesa <b>03</b> · Status: <b>Aberta</b></p></div><button class="btn secondary" onclick="go('mesas')">← Voltar às mesas</button></div><div class="grid2"><div class="panel"><div class="sectiontop"><h2>Adicionar itens ao pedido</h2><span class="tag">RF-003</span></div><div class="formblock"><div class="notice info inline-5"><span>ⓘ</span><span>Confira a anotação recebida do garçom antes de confirmar o pedido.</span></div><div class="field"><label for="product">Produto <span aria-label="obrigatório">*</span></label><select id="product"><option value="8">Refrigerante lata — R$ 8,00</option><option value="35">Porção de batata — R$ 35,00</option><option value="6">Água mineral — R$ 6,00</option></select></div><div class="formcolumns"><div class="field"><label for="quantity">Quantidade <span aria-label="obrigatório">*</span></label><input id="quantity" type="number" min="1" value="2" inputmode="numeric"><small>Informe um número inteiro maior que zero.</small></div><div class="field"><label for="unit-price">Preço unitário</label><input id="unit-price" value="R$ 8,00" disabled></div></div><div class="actions"><button class="btn secondary" onclick="addItem()">＋ Adicionar item</button><button class="btn" onclick="confirmOrder()">✓ Confirmar pedido</button></div><div id="order-feedback" class="notice good inline-6" role="status">✓ Pedido #205 registrado com sucesso. O total da comanda foi atualizado.</div><div class="note-demo">Após registrar, o caixa encaminha a anotação em papel à cozinha.</div></div></div><div class="panel"><div class="sectiontop"><h2>Consumo da comanda</h2><span class="tag">#101</span></div><div class="review"><div class="listhead">Itens registrados</div><div id="order-items"><div class="cartline"><div><strong>Refrigerante lata</strong><small>2 × R$ 8,00</small></div><span class="price">R$ 16,00</span></div><div class="cartline"><div><strong>Porção de batata</strong><small>1 × R$ 35,00</small></div><span class="price">R$ 35,00</span></div></div><div class="totalrow"><span>Total acumulado</span><strong id="order-total">R$ 51,00</strong></div><p class="sub inline-7">Todos os itens ficam associados à mesma comanda até o encerramento.</p><button class="btn inline-8" onclick="go('pagamentos')">Ir para pagamento →</button></div></div></div></section>
-</main></div></div><script src="js/app.js" defer></script>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="description" content="BarFlow: protótipo acadêmico de mesas, pedidos e pagamentos para pequenos bares.">
+ <title>BarFlow — Registro de pedidos</title>
+ <link rel="stylesheet" href="css/global.css">
+ <script src="js/store.js" defer></script>
+ <script src="js/app.js" defer></script>
+</head>
+<body data-page="pedidos">
+ <div class="shell">
+ <aside class="side">
+  <div class="brand"><div class="brandmark" aria-hidden="true">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div>
+  <div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal"><a id="nav-mesas" href="index.html" ><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
+<a id="nav-pedidos" href="pedidos.html" class="active" aria-current="page"><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
+<a id="nav-pagamentos" href="pagamentos.html" ><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a></nav></div>
+  <div class="side-bottom"><strong>◉ Demonstração local</strong>Dados fictícios, sem servidor ou pagamentos reais.<button id="reset-demo" class="reset-button" type="button">Reiniciar demonstração</button></div>
+ </aside>
+ <div class="content">
+  <header class="topbar"><div class="crumb">BarFlow <span class="crumb-separator">/</span> Registro de pedidos</div>
+    <div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div class="user-identity"><strong>Operador Demo</strong><small>Perfil ilustrativo: Caixa</small></div><button id="logout-demo" class="btn secondary" type="button">Sair</button></div>
+  </header>
+  <main class="main"><section aria-labelledby="page-title">
+ <div class="head"><div><div class="eyebrow">Atendimento · Mesa <span data-mesa>—</span></div><h1 id="page-title">Registro de pedidos</h1><p class="sub">Comanda <b data-comanda>—</b> · Mesa <b data-mesa>—</b> · Status: Aberta</p></div><a class="btn secondary" href="index.html">← Voltar às mesas</a></div>
+ <div id="empty-state" class="notice info" hidden></div>
+ <div id="flow-panel" class="grid2" hidden>
+  <div class="panel"><div class="sectiontop"><h2>Adicionar produto à comanda</h2><span class="tag">RF-003</span></div>
+   <form id="order-form" class="formblock">
+    <div class="notice info intro-note">ⓘ Confira a anotação recebida do garçom antes de registrar o item.</div>
+    <div class="field"><label for="product">Produto <span aria-hidden="true">*</span></label><select id="product" required></select></div>
+    <div class="formcolumns">
+     <div class="field"><label for="quantity">Quantidade <span aria-hidden="true">*</span></label><input id="quantity" name="quantity" type="number" min="1" max="999" step="1" value="1" required><small>Informe um número inteiro de 1 a 999.</small></div>
+     <div class="field"><label for="unit-price">Preço unitário</label><input id="unit-price" readonly aria-readonly="true"></div>
+    </div>
+    <div class="actions"><button class="btn" type="submit">＋ Registrar item</button><a href="index.html" class="btn secondary">Voltar às mesas</a></div>
+    <div class="note-demo">Após registrar, o caixa encaminha a anotação em papel à cozinha.</div>
+   </form></div>
+  <div class="panel"><div class="sectiontop"><h2>Consumo da comanda</h2><span class="tag" data-comanda>—</span></div>
+   <div class="review"><div class="listhead">Itens registrados</div><div id="order-items" aria-live="polite"></div>
+    <div class="totalrow"><span>Total acumulado</span><strong id="order-total">R$ 0,00</strong></div>
+    <p class="sub section-note">Os itens permanecem na mesma comanda até o encerramento.</p>
+    <a id="to-payments" class="btn full-width" href="pagamentos.html">Ir para pagamento →</a>
+   </div>
+  </div>
+ </div>
+</section>
+   <div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div>
+   <p class="note-demo">ⓘ Protótipo semifuncional: dados fictícios são salvos apenas neste navegador. Não possui autenticação, banco de dados, API ou integração financeira.</p>
+  </main>
+ </div>
+ </div>
 </body>
 </html>
