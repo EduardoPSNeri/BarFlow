@@ -1,0 +1,37 @@
+name: BarFlow CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build e testes automatizados
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Obter codigo do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Exibir versao do Node.js
+        run: node --version
+
+      - name: Build - validar sintaxe do JavaScript
+        run: |
+          node --check Frontend/js/store.js
+          node --check Frontend/js/app.js
+
+      - name: Executar testes automatizados de comandas e pagamentos
+        run: node --test tests/store.test.cjs
