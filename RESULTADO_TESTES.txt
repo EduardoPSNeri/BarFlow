@@ -1,0 +1,18 @@
+BarFlow — verificação automatizada nesta entrega
+
+Comando: python -m pytest -q
+Resultado: 3 passed in 1.40s
+
+Cenários cobertos:
+- Abertura independente de mesas e prevenção de duplicidade
+- Criação de produto, registro e idempotência de pedido
+- Pagamento parcial, troco e bloqueio de encerramento pendente
+- Baixa de estoque no fechamento e abertura de nova comanda
+- Configuração de venda sem estoque
+- Permissões de administrador e caixa; proteção CSRF
+- Cancelamento de comanda vazia com justificativa
+
+Comando: node --check Frontend/js/app.js
+Resultado: sintaxe válida
+
+Nota: não foi possível executar teste visual em navegador nesta infraestrutura (bloqueio administrativo ao acessar localhost). Validação visual/local pelo usuário permanece pendente. O pacote não foi instalado nem testado em Windows real.

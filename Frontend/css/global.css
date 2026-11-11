@@ -41,3 +41,19 @@
 .btn.secondary:hover{background:#f1f6f9}
 #payment-status{margin-top:22px}
 @media(max-width:650px){.topbar{height:auto;min-height:76px;gap:10px;padding:12px 16px;flex-wrap:wrap}.head{flex-direction:column}.userbox{flex-wrap:wrap}.sectiontop{gap:12px;flex-wrap:wrap}.tables{padding:14px;gap:10px}.tablecard{padding:12px}.formcolumns{grid-template-columns:1fr}.footerhint{gap:10px;flex-wrap:wrap}}
+
+/* Módulos adicionais e acesso */
+.login-page{display:grid;place-items:center;min-height:100vh;padding:24px;background:#f4f7fb}
+.login-card{width:min(100%,460px);padding:32px}
+.login-card .brandmark{margin-bottom:12px}
+.formblock h2{margin:0 0 18px;font-size:20px}
+.formblock .field{display:flex;flex-direction:column;gap:10px}
+.formblock .field>input,.formblock .field>select{width:100%;min-height:44px;padding:10px;border:1px solid #bac9d4;border-radius:8px}
+.formblock form button{margin-top:10px}
+.section-note{margin-top:24px}
+.nav a:focus-visible,a:focus-visible{outline:3px solid #f4a62a;outline-offset:3px}
+[hidden]{display:none !important}
+@media(max-width:800px){.side{width:auto}.shell{display:block}.nav{flex-direction:row;flex-wrap:wrap}.side-bottom{display:none}.topbar{height:auto;min-height:60px;padding:12px}.main{padding:18px}}
+
+.cancel-action{margin-top:8px;background:#fff4eb;border:1px solid #e6b39d;color:#9d3b1f;border-radius:8px;padding:8px;width:100%;min-height:44px}
+@media(max-width:800px){.side{display:flex;flex-direction:column}}

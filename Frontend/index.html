@@ -6,7 +6,7 @@
  <meta name="description" content="BarFlow: protótipo acadêmico de mesas, pedidos e pagamentos para pequenos bares.">
  <title>BarFlow — Painel de mesas</title>
  <link rel="stylesheet" href="css/global.css">
- <script src="js/store.js" defer></script>
+ 
  <script src="js/app.js" defer></script>
 </head>
 <body data-page="mesas">
@@ -16,14 +16,14 @@
   <div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal"><a id="nav-mesas" href="index.html" class="active" aria-current="page"><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
 <a id="nav-pedidos" href="pedidos.html" ><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
 <a id="nav-pagamentos" href="pagamentos.html" ><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a></nav></div>
-  <div class="side-bottom"><strong>◉ Demonstração local</strong>Dados fictícios, sem servidor ou pagamentos reais.<button id="reset-demo" class="reset-button" type="button">Reiniciar demonstração</button></div>
+  <div class="side-bottom"><strong>◉ Operação local</strong>Servidor FastAPI e banco SQLite.</div>
  </aside>
  <div class="content">
   <header class="topbar"><div class="crumb">BarFlow <span class="crumb-separator">/</span> Painel de mesas</div>
-    <div class="userbox"><span class="pill demo">◆ DADOS FICTÍCIOS</span><div class="avatar" aria-hidden="true">OD</div><div class="user-identity"><strong>Operador Demo</strong><small>Perfil ilustrativo: Caixa</small></div><button id="logout-demo" class="btn secondary" type="button">Sair</button></div>
+    <div class="userbox"><span class="pill demo">◆ BARFLOW LOCAL</span><div class="avatar" aria-hidden="true">OD</div><div class="user-identity"><strong>Operador</strong><small>Perfil: Caixa</small></div><button id="logout-demo" class="btn secondary" type="button">Sair</button></div>
   </header>
   <main class="main"><section aria-labelledby="page-title">
- <div class="head"><div><div class="eyebrow">Visão geral · Atendimento</div><h1 id="page-title">Painel de mesas</h1><p class="sub">Abra uma comanda ou consulte o atendimento de qualquer mesa.</p></div><span class="pill">● Operação demonstrativa</span></div>
+ <div class="head"><div><div class="eyebrow">Visão geral · Atendimento</div><h1 id="page-title">Painel de mesas</h1><p class="sub">Abra uma comanda ou consulte o atendimento de qualquer mesa.</p></div><span class="pill">● Operação local</span></div>
  <div class="metricrow">
   <div class="metric panel"><div><span>MESAS CADASTRADAS</span><strong id="all-count">10</strong></div><div class="metricicon" aria-hidden="true">▦</div></div>
   <div class="metric panel"><div><span>MESAS LIVRES</span><strong id="free-count">10</strong></div><div class="metricicon" aria-hidden="true">✓</div></div>
@@ -34,7 +34,7 @@
  </div>
  </section>
    <div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div>
-   <p class="note-demo">ⓘ Protótipo semifuncional: dados fictícios são salvos apenas neste navegador. Não possui autenticação, banco de dados, API ou integração financeira.</p>
+   <p class="note-demo">ⓘ Aplicação local: dados persistidos em SQLite. Não há integração com bancos, Pix ou cartão.</p>
   </main>
  </div>
  </div>

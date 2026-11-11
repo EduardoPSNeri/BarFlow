@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="description" content="BarFlow: protótipo acadêmico de mesas, pedidos e pagamentos para pequenos bares.">
+ <title>BarFlow — Caixa</title>
+ <link rel="stylesheet" href="css/global.css">
+ 
+ <script src="js/app.js" defer></script>
+</head>
+<body data-page="caixa">
+ <div class="shell">
+ <aside class="side">
+  <div class="brand"><div class="brandmark" aria-hidden="true">B</div><div><strong>BarFlow</strong><small>GESTÃO SIMPLIFICADA</small></div></div>
+  <div><div class="group-title">Operação</div><nav class="nav" aria-label="Navegação principal"><a id="nav-mesas" href="index.html"><span class="ico" aria-hidden="true">▦</span><span class="label">Painel de mesas</span></a>
+<a id="nav-pedidos" href="pedidos.html" ><span class="ico" aria-hidden="true">▤</span><span class="label">Registrar pedidos</span></a>
+<a id="nav-pagamentos" href="pagamentos.html" ><span class="ico" aria-hidden="true">▣</span><span class="label">Pagamentos</span></a></nav></div>
+  <div class="side-bottom"><strong>◉ Operação local</strong>Servidor FastAPI e banco SQLite.</div>
+ </aside>
+ <div class="content">
+  <header class="topbar"><div class="crumb">BarFlow <span class="crumb-separator">/</span> Caixa</div>
+    <div class="userbox"><span class="pill demo">◆ BARFLOW LOCAL</span><div class="avatar" aria-hidden="true">OD</div><div class="user-identity"><strong>Operador</strong><small>Perfil: Caixa</small></div><button id="logout-demo" class="btn secondary" type="button">Sair</button></div>
+  </header>
+  <main class="main"><div class="head"><div><div class="eyebrow">Financeiro</div><h1>Abertura e fechamento de caixa</h1><p class="sub">Pagamentos só podem ser registrados com um caixa aberto.</p></div></div>
+<div id="cash-status" class="notice info" role="status"></div>
+<div class="metricrow section-note"><div class="metric panel"><div><span>DINHEIRO</span><strong id="dinheiro-total">R$ 0,00</strong></div></div><div class="metric panel"><div><span>PIX</span><strong id="pix-total">R$ 0,00</strong></div></div><div class="metric panel"><div><span>CARTÃO</span><strong id="cartao-total">R$ 0,00</strong></div></div></div>
+<div class="grid2"><div class="panel formblock"><h2>Abrir caixa</h2><form id="cash-open-form" class="field"><label for="cash-start">Saldo inicial em dinheiro (R$)</label><input id="cash-start" value="0" inputmode="decimal" required><button class="btn">Abrir caixa</button></form></div><div class="panel formblock"><h2>Fechar caixa (administrador)</h2><form id="cash-close-form" class="field"><label for="cash-end">Dinheiro contado no caixa (R$)</label><input id="cash-end" value="0" inputmode="decimal" required><button class="btn">Fechar caixa</button></form></div></div><div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div></main>
+ </div>
+ </div>
+</body>
+</html>
