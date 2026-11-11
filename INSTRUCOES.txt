@@ -1,9 +1,0 @@
-BARFLOW v2.1 - CORRECAO DO INICIALIZADOR
-1. Feche qualquer instancia do BarFlow.
-2. Copie iniciar_bar_flow.bat, iniciar_diagnostico.bat e a pasta scripts para a RAIZ da pasta BarFlow.
-3. Ao substituir a pasta scripts, mescle os arquivos: nao exclua os scripts existentes.
-4. Execute iniciar_bar_flow.bat. O terminal desaparece apos iniciar o servidor e abrir o navegador.
-5. Se houver erro, a janela fica aberta e as mensagens ficam em data\inicializacao.log.
-6. Para diagnosticar a aplicacao sem ocultar o console, execute iniciar_diagnostico.bat.
-7. O banco em data\barflow.db nao e apagado nem modificado por esta correcao.
-NOTA: Se a porta 8000 estiver ocupada, encerre a aplicacao conflitante.
