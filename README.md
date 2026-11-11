@@ -1,26 +1,96 @@
-# BarFlow — MVP local (FastAPI + SQLite)
+# BarFlow v2.0 — Sistema de Gerenciamento de Bares
 
-Sistema web local para a operação de **mesas, comandas, pedidos, pagamentos, estoque, caixa e relatórios** de um pequeno bar. Foi desenvolvido como continuação do protótipo acadêmico BarFlow. A instalação é **offline** após baixar as dependências, usando um único computador Windows.
+[![BarFlow CI v2](https://github.com/EduardoPSNeri/BarFlow/actions/workflows/ci.yml/badge.svg)](https://github.com/EduardoPSNeri/BarFlow/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
+![SQLite](https://img.shields.io/badge/Banco-SQLite-003B57)
+![Versão](https://img.shields.io/badge/versão-2.0.0-informational)
 
-> **Importante:** esta é uma versão de testes. Não processa pagamentos reais por Pix ou cartão, não emite documentos fiscais e **não deve ser utilizada em produção sem testes de aceitação, backups e revisão de segurança**. Os valores digitados são registros manuais de pagamentos já recebidos por outros meios.
+O **BarFlow** é uma aplicação web local para auxiliar a operação de pequenos bares e estabelecimentos similares. Organiza **mesas, comandas, pedidos, pagamentos, estoque, caixa, usuários e relatórios**, substituindo parte dos registros manuais por um fluxo digital integrado.
+
+O projeto surgiu de uma experiência prática do curso de **Análise e Desenvolvimento de Sistemas**, a partir de necessidades identificadas em um estabelecimento parceiro em Patos de Minas (MG). O objetivo é reduzir falhas de registro, facilitar a conferência das comandas e apoiar a organização operacional.
+
+> [!IMPORTANT]
+> **Versão de testes / MVP acadêmico.** O BarFlow v2.0 ainda precisa de validação completa em Windows, testes de aceitação, revisão de segurança e testes de recuperação de dados antes de uma implantação comercial. Os pagamentos são **registrados manualmente**: o sistema não processa transações bancárias, não emite notas fiscais e não se integra a maquininhas ou instituições financeiras.
+
+## Funcionalidades
+
+| Módulo | Recursos disponíveis |
+| --- | --- |
+| **Mesas** | Painel com dez mesas, identificação de disponibilidade e abertura de comandas. |
+| **Comandas e pedidos** | Registro de produtos e quantidades, consulta de itens e cálculo automático dos valores. |
+| **Pagamentos** | Registro de dinheiro, Pix e cartão; pagamentos parciais; cálculo de saldo e troco. |
+| **Estoque** | Cadastro de produtos, quantidades e movimentações; controle configurável de estoque negativo. |
+| **Caixa** | Abertura com saldo inicial e fechamento da operação. |
+| **Relatórios** | Consulta de vendas e valores registrados no sistema. |
+| **Usuários** | Perfis `ADMINISTRADOR` e `CAIXA`, autenticação e alteração de senha. |
+| **Backup** | Script para gerar cópia consistente do banco SQLite. |
+
+### Regras de negócio principais
+
+- Cada mesa pode ter **uma única comanda aberta** por vez.
+- Uma comanda aberta pode receber diversos pedidos; o valor total é recalculado a partir dos itens registrados.
+- Os valores monetários são tratados em **centavos inteiros** nas regras de negócio.
+- Os pagamentos podem ser parciais e combinar diferentes formas de recebimento.
+- **Pix e cartão** não aceitam valor superior ao saldo devido. **Dinheiro** pode gerar troco.
+- O encerramento exige uma comanda com itens e **saldo integralmente quitado**.
+- Para produtos com controle de estoque, a baixa é realizada **uma única vez no encerramento** da comanda.
+- Quando não há estoque suficiente, o encerramento é bloqueado, exceto se o administrador habilitar a configuração geral de **estoque negativo**.
+- O cancelamento de uma comanda vazia exige justificativa e é restrito ao administrador **pela API**; não há interface administrativa dedicada para essa operação nesta versão.
+- O registro de pagamentos exige **caixa aberto**.
+
+## Tecnologias e arquitetura
+
+- **Backend:** Python 3.12, FastAPI e Uvicorn.
+- **Persistência:** SQLite e SQLAlchemy.
+- **Validação:** Pydantic.
+- **Autenticação e segurança:** Argon2id, cookies de sessão `HttpOnly`, proteção CSRF e controle de permissões no servidor.
+- **Frontend:** HTML5, CSS3 e JavaScript puro (*Vanilla JS*), sem framework de interface.
+- **Qualidade:** Pytest, FastAPI TestClient, Node.js para verificação de sintaxe JavaScript e GitHub Actions para integração contínua.
+
+A aplicação é executada em um **único computador**, com servidor local acessível pelo navegador em `127.0.0.1:8000`. O frontend consome a API FastAPI; a API aplica as regras de negócio e persiste as informações no SQLite. **Não é necessária conexão com a internet para a operação local depois de instalada.**
 
 ## Requisitos
 
-- Windows 10/11 (ou Linux/macOS para desenvolvimento)
-- Navegador atualizado; **o instalador Windows detecta e pode baixar automaticamente o Python 3.12** (com sua autorizacao)
-- Porta local 8000 disponível
+- **Windows 10/11 x64**, para o instalador automatizado; Linux/macOS podem ser usados no desenvolvimento com instalação manual.
+- Navegador atualizado.
+- Porta TCP local **8000** disponível.
+- Internet **na primeira instalação** para obter o Python, se necessário, e as dependências.
 
-## Instalar no Windows (automatico)
+## Instalação no Windows
 
-1. Extraia todo o ZIP para uma pasta local (por exemplo, `C:\BarFlow`).
-2. Clique duas vezes em **`instalar_windows.bat`**.
-3. Caso Python 3.12 nao esteja presente, o assistente pedira autorizacao e baixara **Python 3.12.10 (x64)** diretamente de `python.org`. O download e verificado pela assinatura digital da **Python Software Foundation**, antes de instalar para o usuario atual. Nao e necessario instalar Python manualmente.
-4. O instalador criara `.venv`, instalara as bibliotecas de `requirements.txt` e criara o administrador inicial com usuario e senha provisoria admin/admin, quando ainda nao houver administrador.
-5. Para iniciar, execute **`iniciar_windows.bat`**, depois abra `http://127.0.0.1:8000/login.html`.
+1. Baixe o código-fonte pela opção **Code → Download ZIP** no [repositório](https://github.com/EduardoPSNeri/BarFlow) ou obtenha a versão desejada pelas tags.
+2. Extraia todos os arquivos para uma pasta, por exemplo `C:\BarFlow`.
+3. Execute **`instalar_windows.bat`**.
+4. Se o **Python 3.12** não for encontrado, o instalador solicitará autorização para baixar o **Python 3.12.10 (Windows x64)** do site oficial. O instalador verifica a assinatura digital antes da instalação.
+5. O assistente prepara o ambiente virtual `.venv`, instala as dependências e configura o administrador inicial **somente quando ainda não existe um administrador**.
+6. Execute **`iniciar_windows.bat`**.
+7. Abra **http://127.0.0.1:8000/login.html** no navegador.
 
-**Internet e necessaria na primeira instalacao** para baixar Python (se ausente) e dependencias. Depois, o BarFlow opera localmente sem internet. A instalacao automatica destina-se a **Windows 10/11 x64**; outras arquiteturas devem usar o Python 3.12 oficial correspondente. O script **nao** altera o PATH global e nao instala o Python sem a confirmacao do usuario. Se uma instalacao do Python falhar, reinicie o terminal antes de tentar novamente.
+> [!NOTE]
+> O instalador foi projetado para reaproveitar uma instalação compatível do Python e não exige alterar o `PATH` global. As etapas de instalação automática dependem das permissões e configurações do Windows e devem ser verificadas no computador de destino.
 
-Para instalar manualmente em ambiente de desenvolvimento:
+### Primeiro acesso
+
+Em um banco novo, o instalador cria uma conta provisória:
+
+| Campo | Valor inicial |
+| --- | --- |
+| Usuário | `admin` |
+| Senha provisória | `admin` |
+
+**A alteração da senha é obrigatória no primeiro acesso.** Enquanto a senha provisória não for substituída, o sistema impede operações de negócio. Depois da alteração, é necessário entrar novamente.
+
+A política atual de novas senhas é de **4 a 20 caracteres**. Senhas antigas de versões anteriores com mais de 20 caracteres continuam aceitas para autenticação, mas alterações devem respeitar o novo limite.
+
+> [!WARNING]
+> Uma senha de quatro caracteres é fraca. Use uma senha longa e exclusiva, mesmo em ambiente local. Não exponha o BarFlow à rede ou à internet com as credenciais provisórias.
+
+O administrador pode gerenciar contas e perfis. Usuários autenticados podem alterar a própria senha pela opção **Minha senha**.
+
+### Instalação manual para desenvolvimento (Windows PowerShell)
+
+Na raiz do projeto, com Python 3.12 disponível:
 
 ```powershell
 py -3.12 -m venv .venv
@@ -29,102 +99,138 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
 
-## Primeiro uso
+Acesse **http://127.0.0.1:8000/login.html**.
 
-1. Entre como administrador.
-2. Em **Estoque**, cadastre alguns produtos, preços em reais e quantidades.
-3. Abra o módulo **Caixa** e informe o saldo inicial (pode ser zero).
-4. Em **Painel de mesas**, abra uma comanda para qualquer uma das dez mesas.
-5. Em **Pedidos**, adicione um ou mais produtos e confira o total.
-6. Em **Pagamentos**, registre o recebimento manual (Pix, cartão ou dinheiro), inclusive pagamentos parciais.
-7. Quite o saldo e encerre a comanda. O estoque controlado é baixado **uma única vez, no encerramento**.
-8. Consulte **Relatórios** e **Estoque** para conferir o histórico. O administrador pode fechar o caixa.
+## Roteiro de teste funcional
 
-## Regras principais
+1. Entre como administrador e, se solicitado, altere a senha provisória.
+2. No **Estoque**, cadastre um produto, seu preço e sua quantidade inicial.
+3. Abra o **Caixa** com saldo inicial de R$ 0,00.
+4. No painel de mesas, abra uma comanda e registre produtos em **Pedidos**.
+5. Em **Pagamentos**, registre parte do valor por Pix ou cartão e o restante em dinheiro; confira o saldo e o troco.
+6. Tente encerrar uma comanda ainda não quitada para conferir o bloqueio.
+7. Quite o saldo, encerre a comanda e confira a liberação da mesa e a baixa do estoque controlado.
+8. Consulte **Relatórios** e encerre o caixa conforme o fluxo operacional.
 
-- Uma única comanda aberta por mesa; novas comandas recebem novo ID.
-- Pedidos preservam preço e nome do produto no momento do registro.
-- Total, pagamentos aplicados e troco calculados em centavos inteiros.
-- Pix e cartão não permitem recebimento acima do saldo; dinheiro pode gerar troco.
-- Nenhuma comanda com saldo pendente ou sem itens pode ser encerrada.
-- Sem estoque suficiente, a baixa bloqueia o encerramento; o administrador pode optar pela configuração geral de estoque negativo.
-- Cancelamento de comanda **vazia** é restrito ao administrador via API; exige justificativa.
-- Perfis: `ADMINISTRADOR` (acesso à gestão) e `CAIXA` (mesas, pedidos, pagamentos, abertura de caixa e leitura de estoque).
-- Pagamentos exigem caixa aberto.
+Considere esses passos um **roteiro de validação**, não evidência de homologação da aplicação.
 
-## Estrutura
+## Organização do projeto
 
 ```text
-backend/
-  database.py    # engine SQLite, sessões SQLAlchemy
-  models.py      # entidades e relacionamentos
-  schemas.py     # validações de entrada Pydantic
-  security.py    # Argon2id, cookie HttpOnly e CSRF
-  services.py    # regras de comandas e pagamentos
-  main.py        # rotas FastAPI + arquivos estáticos
-Frontend/
-  index.html, pedidos.html, pagamentos.html
-  estoque.html, caixa.html, relatorios.html, usuarios.html, login.html
-  css/global.css, js/app.js
-scripts/
-  criar_admin.py, backup.py
+BarFlow/
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # Integração contínua v2
+├── backend/
+│   ├── database.py              # Conexão SQLite / sessões SQLAlchemy
+│   ├── models.py                # Entidades do domínio
+│   ├── schemas.py               # Validação de entradas
+│   ├── security.py              # Hash, sessão e CSRF
+│   ├── services.py              # Regras de negócio
+│   └── main.py                  # API e disponibilização do frontend
+├── Frontend/
+│   ├── index.html               # Painel de mesas
+│   ├── pedidos.html
+│   ├── pagamentos.html
+│   ├── estoque.html
+│   ├── caixa.html
+│   ├── relatorios.html
+│   ├── usuarios.html
+│   ├── login.html
+│   ├── alterar-senha.html
+│   ├── css/global.css
+│   └── js/
+│       ├── app.js
+│       └── store.js
+├── scripts/
+│   ├── instalar_windows.ps1
+│   ├── criar_admin.py
+│   └── backup.py
+├── tests/
+│   ├── test_api.py
+│   ├── test_initial_admin.py
+│   └── test_password_policy.py
+├── instalar_windows.bat
+├── iniciar_windows.bat
+├── requirements.txt
+├── requirements-dev.txt
+└── README.md
 ```
 
-O banco é criado em `data/barflow.db` na inicialização. A pasta `data/` fica fora do Git pelo `.gitignore`.
+O banco local é criado em **`data/barflow.db`**. Essa pasta contém dados operacionais e está excluída do versionamento no `.gitignore`.
 
-### Backup
+## Testes automatizados
 
-Feche o servidor ou faça o backup consistente com:
+Instale as dependências de desenvolvimento e execute:
 
 ```powershell
-python scripts/backup.py
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pytest -q tests/
 ```
 
-Um arquivo `.db` com data e horário será criado em `data/backups/`. Teste periodicamente a restauração em outro diretório.
-
-## Testes
+Para conferir a sintaxe dos arquivos JavaScript, com Node.js instalado:
 
 ```powershell
-python -m pip install -r requirements-dev.txt
-python -m pytest -q
+node --check Frontend/js/app.js
+node --check Frontend/js/store.js
 ```
 
-## Segurança e limitações
+Os testes Python abrangem cenários de autenticação, regras de senhas, permissões, pedidos, pagamentos, fechamento de comandas e estoque. A suíte **não substitui** testes manuais de interface, instalação Windows, concorrência, backup/restauração e aceitação pelo estabelecimento.
 
-- Senhas protegidas com Argon2id. Cookies de sessão HttpOnly, SameSite Strict e expiração de 8 horas; operações de escrita exigem token CSRF.
-- Inicialização em `127.0.0.1` para acesso exclusivamente local. **Não exponha essa aplicação à internet.** A configuração `Secure` dos cookies foi mantida desativada para `http://127.0.0.1`; publicação em HTTPS requer ajuste.
-- Limitador de login básico em memória (não distribuído).
-- SQLite: adequado a um caixa local, não a múltiplos terminais simultâneos sem revisão.
-- Ainda não há relatórios fiscais, impressão de comandas, integração bancária ou interface de cancelamento administrativo.
-- O modelo de estoque é simples (quantidade por produto); não calcula ingredientes/fichas técnicas de receitas.
-- Revisões de CSRF, cookies, regras de estoque, concorrência, recuperação de falhas e testes de usabilidade são necessárias antes de uso real.
+### GitHub Actions
 
-## ODS
+O workflow **[BarFlow CI v2](.github/workflows/ci.yml)** executa automaticamente:
 
-Alinhamento acadêmico ao **ODS 8 — Trabalho Decente e Crescimento Econômico**, meta 8.2, ao buscar organização e produtividade no contexto local do estabelecimento.
+- **Backend:** Python 3.12, instalação a partir de `requirements-dev.txt`, compilação de sintaxe e execução de `pytest` com banco isolado.
+- **Frontend:** Node.js 22 e verificação de sintaxe dos módulos JavaScript.
 
+A execução é acionada em *pushes* para `main`, `feat/**`, `fix/**` e `test/**`, em *Pull Requests* para `main` e manualmente pela interface do GitHub.
 
-## Correcao do instalador v1.2 (Windows)
+Consulte o [histórico de execuções](https://github.com/EduardoPSNeri/BarFlow/actions/workflows/ci.yml). **Um pipeline verde confirma esses testes automatizados, não que o sistema está homologado para produção.**
 
-Esta revisao corrige a deteccao de Python 3.12 no Windows PowerShell 5.1, inclusive quando instalado somente para o usuario atual. O instalador procura o executavel no diretorio padrao, no Registro do Windows (PEP 514) e via launcher `py`.
+## Backup e proteção dos dados
 
-Se a instalacao v1.1 ja baixou o Python, execute **instalar_windows.bat** novamente usando esta versao. O instalador deve reaproveitar a instalacao existente, sem novo download. Caso o Windows tenha bloqueado a instalacao ou o executavel nao exista, o script voltara a solicitar o download. Nao apague o banco de dados nem as pastas de projeto para corrigir esse erro.
+O SQLite armazena os dados localmente. Para criar um backup consistente, utilize o script:
 
-Para diagnosticar manualmente no PowerShell: `py -3.12 --version` ou `& "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe" --version`.
+```powershell
+.\.venv\Scripts\python.exe scripts\backup.py
+```
 
-## Acesso inicial (v1.3)
+Os arquivos são gravados em `data/backups/` com identificação de data e hora. Guarde cópias fora da pasta do projeto e **teste periodicamente a restauração** antes de confiar no procedimento.
 
-Na **primeira instalação em banco vazio**, o instalador cria automaticamente o usuário provisório `admin` com senha `admin`. Essa senha é **temporária e insegura**: no primeiro login o BarFlow exige a definição de uma senha exclusiva de 4 a 20 caracteres e impede qualquer operação até a troca. Após alterar a senha, todas as sessões são invalidadas e será necessário entrar novamente.
+Não publique no GitHub a pasta `data/`, bancos `.db`, arquivos de ambiente `.env`, credenciais ou o diretório `.venv/`.
 
-Em instalações existentes, o instalador **preserva o administrador e sua senha**; não redefine credenciais nem remove dados. Nunca exponha o serviço à rede ou à internet com a senha provisória.
+## Segurança e limitações atuais
 
-O administrador não precisa mais informar nome e senha durante a instalação.
+- Senhas são armazenadas por **hash Argon2id**, não em texto puro.
+- As sessões utilizam cookie `HttpOnly`, `SameSite=Strict` e expiração configurada; operações de escrita exigem token CSRF.
+- O servidor é iniciado em `127.0.0.1`, sem exposição planejada à rede externa.
+- O limitador de tentativas de login é básico e mantido em memória.
+- O SQLite foi adotado para um **único terminal local**; o projeto não foi preparado para múltiplos caixas simultâneos.
+- Os registros de Pix e cartão **não realizam transferências**; apenas anotam valores recebidos externamente.
+- Não há emissão de documentos fiscais, integração com adquirentes, impressão de comandas ou controle de ingredientes por ficha técnica.
+- O cancelamento administrativo de comanda vazia existe na API, mas não tem tela própria nesta versão.
+- Ainda são necessários testes de recuperação, segurança, concorrência, instalação, usabilidade e aceitação para qualquer implantação real.
 
-Após a configuração inicial, qualquer usuário autenticado poderá alterar sua senha pela opção **Minha senha** do menu, informando a senha atual.
+## Histórico de evolução
 
-## Política de senhas (v1.4)
+| Etapa | Evolução |
+| --- | --- |
+| Protótipo inicial | Interface de mesas, pedidos e pagamentos em HTML, CSS e JavaScript, com dados demonstrativos no navegador. |
+| v1.2 | Correção da localização do Python 3.12 no instalador Windows. |
+| v1.3 | Conta inicial `admin/admin` com troca obrigatória de senha. |
+| v1.4 | Política de senhas de 4 a 20 caracteres. |
+| **v2.0** | Backend FastAPI, SQLite, autenticação e módulos operacionais integrados, com testes automatizados e GitHub Actions. |
 
-- Novas senhas e senhas alteradas: **4 a 20 caracteres**. O requisito é verificado no backend (Pydantic) e nos formulários.
-- Credenciais previamente criadas com mais de 20 caracteres **continuam válidas para login e autenticação da senha atual**; a nova senha escolhida deve seguir o limite de 4 a 20.
-- A senha provisória `admin` continua exigindo troca obrigatória no primeiro acesso e não pode ser escolhida novamente.
-- **Aviso:** senhas de 4 caracteres são fracas. Esta configuração é adequada apenas para testes locais controlados; recomenda-se senha longa e exclusiva em qualquer implantação real.
+> As etapas anteriores descrevem a evolução do projeto; **a versão principal documentada neste README é a v2.0**.
+
+## Contexto acadêmico e ODS
+
+O BarFlow foi desenvolvido no contexto de uma atividade prática de **Análise e Desenvolvimento de Sistemas**, a partir do diagnóstico de problemas no registro manual de pedidos e comandas de um pequeno estabelecimento parceiro.
+
+A proposta está alinhada ao **Objetivo de Desenvolvimento Sustentável 8 — Trabalho Decente e Crescimento Econômico**, especialmente à **meta 8.2**, por buscar apoiar a produtividade e a modernização tecnológica de um pequeno empreendimento. Esse alinhamento descreve a intenção do projeto; resultados efetivos dependem de validação e uso posterior.
+
+## Repositório
+
+Código-fonte: **https://github.com/EduardoPSNeri/BarFlow**  
+Versão de referência: **`v2.0.0`**
