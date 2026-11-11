@@ -20,6 +20,10 @@ def setup(tmp_path, monkeypatch):
     r=client.post('/api/auth/login',json={'username':'admin','password':'SenhaMuitoForte2026!'})
     assert r.status_code==200,r.text
     token=r.json()['csrf_token']
+    # v2.1: mesas são cadastradas sob demanda. Pré-condição explícita para os testes legados.
+    for number in (2, 3, 5, 6, 8):
+        created = client.post('/api/tables', json={'number': number}, headers={'X-CSRF-Token': token})
+        assert created.status_code == 201, created.text
     def req(method,url,body=None):
         return client.request(method,url,json=body,headers={'X-CSRF-Token':token})
     yield req, client

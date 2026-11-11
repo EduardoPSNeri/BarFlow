@@ -25,7 +25,20 @@
   <main class="main"><div class="head"><div><div class="eyebrow">Financeiro</div><h1>Abertura e fechamento de caixa</h1><p class="sub">Pagamentos só podem ser registrados com um caixa aberto.</p></div></div>
 <div id="cash-status" class="notice info" role="status"></div>
 <div class="metricrow section-note"><div class="metric panel"><div><span>DINHEIRO</span><strong id="dinheiro-total">R$ 0,00</strong></div></div><div class="metric panel"><div><span>PIX</span><strong id="pix-total">R$ 0,00</strong></div></div><div class="metric panel"><div><span>CARTÃO</span><strong id="cartao-total">R$ 0,00</strong></div></div></div>
-<div class="grid2"><div class="panel formblock"><h2>Abrir caixa</h2><form id="cash-open-form" class="field"><label for="cash-start">Saldo inicial em dinheiro (R$)</label><input id="cash-start" value="0" inputmode="decimal" required><button class="btn">Abrir caixa</button></form></div><div class="panel formblock"><h2>Fechar caixa (administrador)</h2><form id="cash-close-form" class="field"><label for="cash-end">Dinheiro contado no caixa (R$)</label><input id="cash-end" value="0" inputmode="decimal" required><button class="btn">Fechar caixa</button></form></div></div><div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div></main>
+<div class="grid2"><div class="panel formblock"><h2>Abrir caixa</h2><form id="cash-open-form" class="field"><label for="cash-start">Saldo inicial em dinheiro (R$)</label><input id="cash-start" value="0" inputmode="decimal" required><button class="btn">Abrir caixa</button></form></div><div class="panel formblock"><h2>Fechar caixa (administrador)</h2><form id="cash-close-form" class="field"><label for="cash-end">Dinheiro contado no caixa (R$)</label><input id="cash-end" value="0" inputmode="decimal" required><button class="btn">Fechar caixa</button></form></div></div><div class="panel formblock section-note"><h2>Fluxo financeiro deste caixa</h2>
+<div class="bf-grid"><div class="bf-metric"><small>ENTRADAS TOTAIS</small><strong id="cash-in">R$ 0,00</strong></div>
+<div class="bf-metric"><small>SAÍDAS TOTAIS</small><strong id="cash-out">R$ 0,00</strong></div>
+<div class="bf-metric"><small>SALDO LÍQUIDO DO MOVIMENTO</small><strong id="cash-net">R$ 0,00</strong></div>
+<div class="bf-metric"><small>DINHEIRO EM ESPÉCIE PREVISTO</small><strong id="cash-expected">R$ 0,00</strong></div></div>
+<h2>Registrar saída / despesa</h2><p class="sub">Ex.: açougue, diária de funcionário, fornecedores, compras. A saída em dinheiro reduz o valor previsto na gaveta; Pix e cartão são exibidos separadamente.</p>
+<form id="expense-form" class="bf-toolbar">
+<div class="field"><label for="expense-description">Descrição</label><input id="expense-description" required minlength="3" maxlength="160" placeholder="Ex.: Diária do funcionário"></div>
+<div class="field"><label for="expense-category">Categoria</label><select id="expense-category"><option>Fornecedor</option><option>Diária</option><option>Açougue</option><option>Compras</option><option>Outras despesas</option></select></div>
+<div class="field"><label for="expense-method">Meio</label><select id="expense-method"><option value="dinheiro">Dinheiro</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select></div>
+<div class="field"><label for="expense-amount">Valor R$</label><input id="expense-amount" required inputmode="decimal" placeholder="Ex.: 50,00"></div>
+<button class="btn" type="submit">Registrar saída</button></form>
+<h2>Extrato de entradas e saídas</h2><div class="table-scroll bf-ledger"><table class="paytable"><thead><tr><th>DATA</th><th>TIPO</th><th>DESCRIÇÃO</th><th>FORMA</th><th>VALOR</th></tr></thead><tbody id="cash-ledger"></tbody></table></div></div>
+<div id="feedback" class="notice info feedback" role="status" aria-live="polite" hidden></div></main>
  </div>
  </div>
 </body>

@@ -9,12 +9,12 @@ from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from .database import Base,engine,get_db,SessionLocal,ROOT
-from .models import User,AuthSession,Table,Product,Setting,Account,OrderItem,Payment,StockMovement,CashShift,now
+from .models import User,AuthSession,Table,Product,Setting,Account,OrderItem,Payment,StockMovement,CashShift,CashExpense,now
 from .schemas import LoginIn,ChangePasswordIn,OpenIn,ItemIn,PayIn,ProductIn,MovementIn,SettingIn,ShiftOpenIn,ShiftCloseIn,CancelIn,UserIn
 from .security import auth,admin,login_session,hash_password,verify_password,digest
 from .services import active_account,require_account,serialize_account,open_account,add_item,pay,close_account,current_shift,fail
 
-app=FastAPI(title='BarFlow API',version='1.0.0',docs_url=None,redoc_url=None,openapi_url=None)
+app=FastAPI(title='BarFlow API',version='2.1.0',docs_url=None,redoc_url=None,openapi_url=None)
 FRONT=ROOT/'Frontend'
 app.mount('/css',StaticFiles(directory=FRONT/'css'),name='css')
 app.mount('/js',StaticFiles(directory=FRONT/'js'),name='js')
@@ -27,8 +27,6 @@ with engine.begin() as connection:
             connection.execute(text('ALTER TABLE users ADD COLUMN must_change_password BOOLEAN NOT NULL DEFAULT 0'))
 Base.metadata.create_all(bind=engine)
 with SessionLocal() as db:
-    if not db.query(Table).first():
-        db.add_all([Table(number=i) for i in range(1,11)])
     if not db.get(Setting,'allow_negative_stock'):
         db.add(Setting(key='allow_negative_stock',value='false'))
     db.commit()
@@ -164,22 +162,29 @@ def update_settings(body:SettingIn,user:User=Depends(admin),db:Session=Depends(g
 
 @app.get('/api/cash/current')
 def cash_current(user:User=Depends(auth),db:Session=Depends(get_db)):
+    from .finance import money_totals
     s=current_shift(db)
     if not s:return {'open':False}
     pays=db.query(Payment).filter_by(cash_shift_id=s.id).all()
-    totals={method:sum(p.applied_cents for p in pays if p.method==method) for method in ['dinheiro','pix','cartao']}
-    return {'open':True,'id':s.id,'starting_cash_cents':s.starting_cash_cents,'totals':totals,'expected_cash_cents':s.starting_cash_cents+totals['dinheiro'],'opened_at':s.opened_at.isoformat()}
+    expenses=db.query(CashExpense).filter_by(cash_shift_id=s.id).all()
+    totals=money_totals(pays, expenses,s.starting_cash_cents)
+    return {'open':True,'id':s.id,'starting_cash_cents':s.starting_cash_cents,
+            'totals':totals['receipts_cents'],'opened_at':s.opened_at.isoformat(),**totals}
+
 @app.post('/api/cash/open')
 def cash_open(body:ShiftOpenIn,user:User=Depends(auth),db:Session=Depends(get_db)):
     if current_shift(db):fail('Já existe caixa aberto.')
     s=CashShift(opened_by=user.id,starting_cash_cents=body.starting_cash_cents)
     db.add(s);db.commit();return {'id':s.id,'status':'OPEN'}
+
 @app.post('/api/cash/close')
 def cash_close(body:ShiftCloseIn,user:User=Depends(admin),db:Session=Depends(get_db)):
+    from .finance import money_totals
     s=current_shift(db)
     if not s:fail('Nenhum caixa aberto.')
-    pays=db.query(Payment).filter_by(cash_shift_id=s.id,method='dinheiro').all()
-    expected=s.starting_cash_cents+sum(p.applied_cents for p in pays)
+    pays=db.query(Payment).filter_by(cash_shift_id=s.id).all()
+    expenses=db.query(CashExpense).filter_by(cash_shift_id=s.id).all()
+    expected=money_totals(pays,expenses,s.starting_cash_cents)['expected_cash_cents']
     s.status='CLOSED';s.closed_at=now();s.closed_by=user.id;s.closing_cash_cents=body.counted_cash_cents;db.commit()
     return {'expected_cents':expected,'counted_cents':body.counted_cash_cents,'difference_cents':body.counted_cash_cents-expected}
 
@@ -204,3 +209,7 @@ def create_user(body:UserIn,user:User=Depends(admin),db:Session=Depends(get_db))
     try:db.commit()
     except IntegrityError:db.rollback();fail('Usuário já cadastrado.',409)
     return {'id':u.id,'username':u.username}
+
+
+from .finance import router as finance_router
+app.include_router(finance_router)

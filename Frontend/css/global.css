@@ -57,3 +57,15 @@
 
 .cancel-action{margin-top:8px;background:#fff4eb;border:1px solid #e6b39d;color:#9d3b1f;border-radius:8px;padding:8px;width:100%;min-height:44px}
 @media(max-width:800px){.side{display:flex;flex-direction:column}}
+
+/* BarFlow v2.1 */
+.tablecard.occupied{border:2px solid #16844a!important;background:rgba(34,197,94,.10)!important}
+.tablecard:not(.occupied){border:2px solid #bd3737!important;background:rgba(220,38,38,.06)!important}
+.bf-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:14px 0}
+.bf-toolbar .field{flex:1;min-width:180px}
+.bf-ledger{max-height:390px;overflow:auto}
+.bf-empty{padding:16px;color:var(--muted,#667085)}
+.bf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.bf-metric{padding:15px;border:1px solid #ccc;border-radius:10px}
+.bf-metric small{display:block;margin-bottom:8px}
+.bf-metric strong{font-size:1.35rem}

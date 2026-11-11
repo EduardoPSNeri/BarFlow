@@ -3,3 +3,4 @@ uvicorn==0.48.0
 SQLAlchemy==2.0.50
 argon2-cffi==25.1.0
 pydantic==2.13.5
+tzdata>=2025.2,<2027
