@@ -25,10 +25,14 @@
   <main class="main"><section aria-labelledby="page-title">
  <div class="head"><div><div class="eyebrow">Visão geral · Atendimento</div><h1 id="page-title">Painel de mesas</h1><p class="sub">Abra uma comanda ou consulte o atendimento de qualquer mesa.</p></div><span class="pill">● Operação local</span></div>
  <div class="metricrow">
-  <div class="metric panel"><div><span>MESAS CADASTRADAS</span><strong id="all-count">10</strong></div><div class="metricicon" aria-hidden="true">▦</div></div>
-  <div class="metric panel"><div><span>MESAS LIVRES</span><strong id="free-count">10</strong></div><div class="metricicon" aria-hidden="true">✓</div></div>
+  <div class="metric panel"><div><span>MESAS CADASTRADAS</span><strong id="all-count">0</strong></div><div class="metricicon" aria-hidden="true">▦</div></div>
+  <div class="metric panel"><div><span>MESAS LIVRES</span><strong id="free-count">0</strong></div><div class="metricicon" aria-hidden="true">✓</div></div>
   <div class="metric panel"><div><span>MESAS OCUPADAS</span><strong id="busy-count">0</strong></div><div class="metricicon" aria-hidden="true">▤</div></div>
  </div>
+<div class="panel formblock section-note"><h2>Gestão de mesas</h2>
+  <p class="sub">Adicione mesas conforme necessário. Verde: comanda aberta; vermelho: mesa disponível.</p>
+  <form id="add-table-form" class="bf-toolbar"><div class="field"><label for="new-table-number">Número da nova mesa</label><input type="number" min="1" max="9999" id="new-table-number" required placeholder="Ex.: 11"></div><button class="btn" type="submit">＋ Adicionar mesa</button></form>
+</div>
  <div class="panel"><div class="sectiontop"><h2>Mesas do estabelecimento</h2><div class="legend"><span>✓ Livre</span><span>◷ Ocupada</span></div></div><div id="tables" class="tables" aria-label="Mesas cadastradas"></div>
   <div class="footerhint"><span>Uma comanda aberta por mesa.</span><span>Selecione qualquer mesa para continuar.</span></div>
  </div>

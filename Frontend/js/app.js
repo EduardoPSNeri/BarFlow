@@ -31,20 +31,29 @@ function cart(account){let list=$('order-items');list.replaceChildren();if(!acco
   for(const item of account.items){let row=element('div',undefined,'cartline'),a=element('div'),b=element('strong',item.name),sm=element('small',item.qty+' × '+money(item.price_cents)),p=element('span',money(item.qty*item.price_cents),'price');a.append(b,sm);row.append(a,p);list.append(row);}
   $('order-total').textContent=money(account.total_cents);
 }
-async function tables(){const state=await api('/tables');let occupied=state.filter(t=>t.account).length;
+async function tables(){
+  const state=(await api('/tables')).filter(t=>t.active);
+  const occupied=state.filter(t=>t.account).length;
   $('all-count').textContent=state.length;$('busy-count').textContent=occupied;$('free-count').textContent=state.length-occupied;
-  $('tables').replaceChildren();for(const item of state){
-    let card=element('article',undefined,'tablecard'+(item.account?' occupied':''));
-    let upper=element('div',undefined,'tableupper');upper.append(element('b','Mesa '+String(item.number).padStart(2,'0')),element('span',item.account?'◷ Ocupada':'✓ Livre','status '+(item.account?'busy':'free')));
-    let p=element('p',item.account?'Comanda #'+item.account.id+' · '+money(item.account.due_cents)+' pendente':'Disponível para atendimento');
-    let btn=element('button',item.account?'Visualizar comanda':'＋ Abrir comanda');btn.type='button';btn.disabled=!item.active;
-    btn.onclick=async()=>{try{await api('/tables/'+item.number+'/open','POST');sessionStorage.setItem('barflow-current-table',item.number);location.href=qs('pedidos',item.number);}catch(e){notify('⚠ '+e.message,'warn');}};
-    card.append(upper,p,btn);
-    if(item.account&&!item.account.items.length&&!item.account.payments.length&&me.role==='ADMINISTRADOR'){
-      const cancel=element('button','Cancelar comanda vazia');cancel.type='button';cancel.className='cancel-action';
-      cancel.onclick=async()=>{const reason=prompt('Justificativa para cancelar a comanda (mínimo 5 caracteres):');if(reason===null)return;try{await api('/tables/'+item.number+'/cancel','POST',{reason});await tables();notify('✓ Comanda vazia cancelada.','good');}catch(e){notify('⚠ '+e.message,'warn');}};
-      card.append(cancel);
-    }
+  $('tables').replaceChildren();
+  if(!state.length)$('tables').append(element('p','Nenhuma mesa cadastrada. Use o botão Adicionar mesa.','bf-empty'));
+  const form=$('add-table-form');if(me.role!=='ADMINISTRADOR')form.hidden=true;
+  else form.onsubmit=async e=>{e.preventDefault();try{
+    await api('/tables','POST',{number:Number($('new-table-number').value)});await tables();notify('Mesa cadastrada.','good');
+  }catch(err){notify(err.message,'warn');}};
+  for(const t of state){
+    const card=element('article',undefined,'tablecard'+(t.account?' occupied':''));
+    const upper=element('div',undefined,'tableupper');upper.append(element('b','Mesa '+t.number),element('span',t.account?'● ABERTA':'● FECHADA','status '+(t.account?'free':'busy')));
+    const info=element('p',t.account?'Comanda #'+t.account.id+' · Saldo '+money(t.account.due_cents):'Sem comanda aberta');
+    const btn=element('button',t.account?'Acessar comanda':'Abrir mesa');btn.className='btn';
+    btn.onclick=async()=>{try{
+      if(!t.account)await api('/tables/'+t.number+'/open','POST');
+      sessionStorage.setItem('barflow-current-table',t.number);location.href=qs('pedidos',t.number);
+    }catch(err){notify(err.message,'warn');}};
+    card.append(upper,info,btn);
+    if(me.role==='ADMINISTRADOR'&&!t.account){const remove=element('button','Ocultar mesa');remove.type='button';remove.className='cancel-action';
+      remove.onclick=async()=>{if(!confirm('Ocultar a mesa '+t.number+'? O histórico será preservado.'))return;
+      try{await api('/tables/'+t.number,'DELETE');await tables();}catch(e){notify(e.message,'warn');}};card.append(remove);}
     $('tables').append(card);
   }
 }
@@ -66,12 +75,20 @@ function payRender(account){
   $('payment-status').textContent=!account.items.length?'ⓘ Registre produtos antes de pagar.':account.due_cents===0?'✓ Conta quitada. Pode encerrar.':'ⓘ Saldo pendente: '+money(account.due_cents);
 }
 function cents(value){let v=String(value).trim().replace(',','.');if(!/^\d+(\.\d{1,2})?$/.test(v))throw Error('Use um valor positivo com até duas casas decimais.');let n=Math.round(Number(v)*100);if(!Number.isSafeInteger(n)||n<=0)throw Error('Valor inválido.');return n;}
-async function payments(){let account=await context();if(!account)return;payRender(account);$('back-to-orders').href=qs('pedidos',tableNo);
+async function payments(){
+  const selector=$('payment-table-select');const listed=(await api('/tables')).filter(t=>t.active&&t.account);
+  selector.replaceChildren();let first=element('option','Selecione uma mesa');first.value='';selector.append(first);
+  for(const t of listed){const o=element('option','Mesa '+t.number+' — saldo '+money(t.account.due_cents));o.value=t.number;selector.append(o);}
+  $('payment-table-hint').textContent=listed.length?listed.length+' comanda(s) aberta(s).':'Nenhuma comanda aberta. Abra uma mesa e registre pedidos.';
+  if(listed.some(t=>t.number===tableNo))selector.value=String(tableNo);
+  $('payment-table-go').onclick=()=>{if(selector.value){sessionStorage.setItem('barflow-current-table',selector.value);location.href=qs('pagamentos',Number(selector.value));}else notify('Selecione uma comanda.','warn');};
+  if(!listed.some(t=>t.number===tableNo)){$('flow-panel').hidden=true;$('empty-state').hidden=true;return;}
+  let account=await context();if(!account)return;payRender(account);$('back-to-orders').href=qs('pedidos',tableNo);
   $('pay-form').onsubmit=async(e)=>{e.preventDefault();try{
     const r=await api('/tables/'+tableNo+'/payments','POST',{method:$('pay-method').value,received_cents:cents($('pay-value').value),request_id:crypto.randomUUID()});
-    account=await api('/tables/'+tableNo+'/account');payRender(account);$('pay-value').value='';notify('✓ Pagamento aplicado: '+money(r.applied_cents)+(r.change_cents?' · Troco: '+money(r.change_cents):''),'good');
-  }catch(err){notify('⚠ '+err.message,'warn');}};
-  $('closebutton').onclick=async()=>{try{await api('/tables/'+tableNo+'/close','POST');sessionStorage.removeItem('barflow-current-table');$('flow-panel').hidden=true;$('empty-state').hidden=false;$('empty-state').textContent='✓ Comanda encerrada, mesa liberada. Volte ao painel.';notify('✓ Comanda encerrada com sucesso.','good');}catch(err){notify('⚠ '+err.message,'warn');}};
+    account=await api('/tables/'+tableNo+'/account');payRender(account);$('pay-value').value='';notify('Pagamento registrado: '+money(r.applied_cents)+(r.change_cents?' · Troco '+money(r.change_cents):''),'good');
+  }catch(err){notify(err.message,'warn');}};
+  $('closebutton').onclick=async()=>{try{await api('/tables/'+tableNo+'/close','POST');sessionStorage.removeItem('barflow-current-table');location.href='index.html';}catch(err){notify(err.message,'warn');}};
 }
 function tableRow(table,cells){let tr=element('tr');for(const c of cells)tr.append(element('td',String(c)));table.append(tr);}
 async function stock(){const products=await api('/products');let list=$('product-list');list.replaceChildren();for(const p of products){let tr=element('tr');for(const txt of [p.name,money(p.price_cents),p.stock_qty,p.track_stock?'Sim':'Não',p.active?'Ativo':'Inativo'])tr.append(element('td',String(txt)));list.append(tr);}
@@ -85,16 +102,42 @@ async function stock(){const products=await api('/products');let list=$('product
   }
   const movements=await api('/stock/movements');for(const m of movements)tableRow($('movement-list'),[m.product,m.delta,m.reason,new Date(m.created_at).toLocaleString('pt-BR')]);
 }
-async function cash(){let current=await api('/cash/current');let status=$('cash-status');status.textContent=current.open?'✓ Caixa aberto · início: '+money(current.starting_cash_cents)+' · dinheiro previsto: '+money(current.expected_cash_cents):'ⓘ Nenhum caixa aberto.';
+async function cash(){
+  const current=await api('/cash/current');const status=$('cash-status');
+  status.textContent=current.open?'Caixa aberto · saldo inicial '+money(current.starting_cash_cents):'Nenhum caixa aberto. Abra o caixa para registrar pagamentos e despesas.';
   $('cash-open-form').hidden=current.open;$('cash-close-form').hidden=!current.open||me.role!=='ADMINISTRADOR';
-  if(current.open){for(const m of ['pix','cartao','dinheiro'])$(m+'-total').textContent=money(current.totals[m]);}
+  $('expense-form').hidden=!current.open;
+  if(current.open){
+    for(const m of ['pix','cartao','dinheiro'])$(m+'-total').textContent=money(current.receipts_cents[m]);
+    $('cash-in').textContent=money(current.total_receipts_cents);$('cash-out').textContent=money(current.total_expenses_cents);
+    $('cash-net').textContent=money(current.net_operations_cents);$('cash-expected').textContent=money(current.expected_cash_cents);
+    const data=await api('/cash/ledger');$('cash-ledger').replaceChildren();
+    for(const r of data.rows)tableRow($('cash-ledger'),[new Date(r.created_at+'Z').toLocaleString('pt-BR'),r.kind==='entrada'?'ENTRADA':'SAÍDA',r.description,r.method,(r.kind==='saida'?'- ':'+ ')+money(r.amount_cents)]);
+  }else{$('cash-ledger').replaceChildren();}
   $('cash-open-form').onsubmit=async e=>{e.preventDefault();try{await api('/cash/open','POST',{starting_cash_cents:Math.max(0,centsOrZero($('cash-start').value))});location.reload();}catch(err){notify(err.message,'warn');}};
-  $('cash-close-form').onsubmit=async e=>{e.preventDefault();try{let r=await api('/cash/close','POST',{counted_cash_cents:centsOrZero($('cash-end').value)});notify('✓ Caixa encerrado. Diferença: '+money(r.difference_cents),'good');$('cash-close-form').hidden=true;setTimeout(()=>location.reload(),800);}catch(err){notify(err.message,'warn');}};
+  $('expense-form').onsubmit=async e=>{e.preventDefault();try{
+    await api('/cash/expenses','POST',{description:$('expense-description').value,category:$('expense-category').value,method:$('expense-method').value,amount_cents:cents($('expense-amount').value)});
+    location.reload();
+  }catch(err){notify(err.message,'warn');}};
+  $('cash-close-form').onsubmit=async e=>{e.preventDefault();try{const r=await api('/cash/close','POST',{counted_cash_cents:centsOrZero($('cash-end').value)});alert('Caixa fechado. Previsto: '+money(r.expected_cents)+' · Diferença: '+money(r.difference_cents));location.reload();}catch(err){notify(err.message,'warn');}};
 }
 function centsOrZero(s){return String(s).trim()==='0'?0:cents(s);}
-async function reports(){let data=await api('/reports/summary');$('closed-count').textContent=data.closed_accounts;$('report-sales').textContent=money(data.gross_sales_cents);$('open-count').textContent=data.open_accounts;$('today-sales').textContent=money(data.today_sales_cents);
+async function reports(){
+  const data=await api('/reports/summary');$('closed-count').textContent=data.closed_accounts;$('report-sales').textContent=money(data.gross_sales_cents);
+  $('open-count').textContent=data.open_accounts;$('today-sales').textContent=money(data.today_sales_cents);
   for(const [method,n] of Object.entries(data.payments_cents))$(method+'-report').textContent=money(n);
-  for(const row of data.history)tableRow($('report-list'),['#'+row.id,'Mesa '+row.table_number,money(row.total_cents),new Date(row.closed_at).toLocaleString('pt-BR')]);
+  $('report-list').replaceChildren();for(const row of data.history)tableRow($('report-list'),['#'+row.id,'Mesa '+row.table_number,money(row.total_cents),new Date(row.closed_at+'Z').toLocaleString('pt-BR')]);
+  const today=new Date().toLocaleDateString('en-CA');$('report-start').value=today;$('report-end').value=today;
+  async function draw(){const start=$('report-start').value,end=$('report-end').value;
+    const data=await api('/reports/finance?start='+encodeURIComponent(start)+'&end='+encodeURIComponent(end));
+    $('period-in').textContent=money(data.total_receipts_cents);$('period-out').textContent=money(data.total_expenses_cents);
+    $('period-net').textContent=money(data.net_operations_cents);$('period-closed').textContent=money(data.closed_sales_cents);
+    $('period-ledger').replaceChildren();
+    for(const r of data.rows)tableRow($('period-ledger'),[new Date(r.created_at+'Z').toLocaleString('pt-BR'),r.kind==='entrada'?'ENTRADA':'SAÍDA',r.description,r.method,(r.kind==='saida'?'- ':'+ ')+money(r.amount_cents)]);
+    if(!data.rows.length)tableRow($('period-ledger'),['Sem movimentações no período','','','','']);
+  }
+  $('report-period').onsubmit=async e=>{e.preventDefault();try{await draw();}catch(err){notify(err.message,'warn');}};
+  await draw();
 }
 async function users(){let users=await api('/users');for(const u of users)tableRow($('user-list'),[u.username,u.role,u.active?'Ativo':'Inativo']);
   $('user-form').onsubmit=async e=>{e.preventDefault();try{await api('/users','POST',{username:$('new-username').value,password:$('new-password').value,role:$('new-role').value});location.reload();}catch(err){notify(err.message,'warn');}};

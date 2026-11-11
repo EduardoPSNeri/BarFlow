@@ -106,3 +106,16 @@ class StockMovement(Base):
     account_id:Mapped[int|None]=mapped_column(ForeignKey('accounts.id'),nullable=True)
     created_by:Mapped[int]=mapped_column(ForeignKey('users.id'))
     created_at:Mapped[datetime]=mapped_column(DateTime(timezone=True),default=now)
+
+
+class CashExpense(Base):
+    __tablename__='cash_expenses'
+    id:Mapped[int]=mapped_column(primary_key=True)
+    cash_shift_id:Mapped[int]=mapped_column(ForeignKey('cash_shifts.id'),nullable=False,index=True)
+    description:Mapped[str]=mapped_column(String(160),nullable=False)
+    category:Mapped[str]=mapped_column(String(60),nullable=False)
+    method:Mapped[str]=mapped_column(String(12),nullable=False)
+    amount_cents:Mapped[int]=mapped_column(Integer,nullable=False)
+    created_by:Mapped[int]=mapped_column(ForeignKey('users.id'),nullable=False)
+    created_at:Mapped[datetime]=mapped_column(DateTime(timezone=True),default=now)
+    __table_args__=(CheckConstraint('amount_cents > 0'),)
