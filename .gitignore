@@ -10,3 +10,4 @@ __pycache__/
 *.sqlite
 *.sqlite3
 backup_codigo_pre_v2_1/
+backup_deploy_academico/

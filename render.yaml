@@ -1,0 +1,17 @@
+# Hospedagem EXCLUSIVAMENTE para demonstracao academica.
+# SQLite em plano gratuito: dados temporarios, podem desaparecer em reinicializacoes.
+services:
+  - type: web
+    name: barflow-demo-academico
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: BARFLOW_CLOUD_DEMO
+        value: '1'
+      - key: BARFLOW_ADMIN_PASSWORD
+        sync: false  # Informe uma senha exclusiva no Render; nao comite o valor

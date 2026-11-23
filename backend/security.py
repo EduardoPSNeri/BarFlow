@@ -1,4 +1,4 @@
-import hashlib, secrets
+import hashlib, secrets, os
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, Request, Response
 from sqlalchemy.orm import Session
@@ -18,7 +18,7 @@ def login_session(db:Session,response:Response,user:User)->str:
     token=secrets.token_urlsafe(40);csrf=secrets.token_urlsafe(32)
     db.add(AuthSession(token_hash=digest(token),csrf_hash=digest(csrf),user_id=user.id,expires_at=datetime.now(timezone.utc)+timedelta(hours=8)))
     db.commit()
-    response.set_cookie('barflow_session',token,max_age=8*3600,httponly=True,samesite='strict',secure=False,path='/')
+    response.set_cookie('barflow_session',token,max_age=8*3600,httponly=True,samesite='strict',secure=(os.environ.get('BARFLOW_CLOUD_DEMO') == '1'),path='/')
     return csrf
 
 def auth(request:Request,db:Session=Depends(get_db))->User:
