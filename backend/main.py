@@ -31,6 +31,10 @@ with SessionLocal() as db:
         db.add(Setting(key='allow_negative_stock',value='false'))
     db.commit()
 
+# Nuvem demonstrativa: nunca iniciar com credenciais admin/admin.
+from .cloud import provision_cloud_admin
+provision_cloud_admin(SessionLocal, User, hash_password)
+
 @app.middleware('http')
 async def headers(request:Request,call_next):
     response=await call_next(request)
@@ -213,3 +217,6 @@ def create_user(body:UserIn,user:User=Depends(admin),db:Session=Depends(get_db))
 
 from .finance import router as finance_router
 app.include_router(finance_router)
+
+from .health import router as health_router
+app.include_router(health_router)
